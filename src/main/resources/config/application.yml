@@ -182,7 +182,7 @@ jhipster:
   #   allowed-origins: "http://localhost:8100,http://localhost:9000"
   #   allowed-methods: "*"
   #   allowed-headers: "*"
-  #   exposed-headers: "Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
+  #   exposed-headers: "Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
   #   allow-credentials: true
   #   max-age: 1800
   mail:

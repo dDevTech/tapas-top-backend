@@ -35,6 +35,15 @@ class SecurityUtilsUnitTest {
     }
 
     @Test
+    void testGetCurrentUserJWT() {
+        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+        securityContext.setAuthentication(new UsernamePasswordAuthenticationToken("admin", "token"));
+        SecurityContextHolder.setContext(securityContext);
+        Optional<String> jwt = SecurityUtils.getCurrentUserJWT();
+        assertThat(jwt).contains("token");
+    }
+
+    @Test
     void testIsAuthenticated() {
         SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         securityContext.setAuthentication(new UsernamePasswordAuthenticationToken("admin", "admin"));

@@ -1,7 +1,7 @@
 {
   "generator-jhipster": {
     "applicationType": "monolith",
-    "authenticationType": "session",
+    "authenticationType": "jwt",
     "baseName": "tapasTop",
     "blueprints": [],
     "buildTool": "maven",
@@ -10,7 +10,7 @@
     "clientPackageManager": "npm",
     "clientTheme": "none",
     "clientThemeVariant": "",
-    "creationTimestamp": 1678206902912,
+    "creationTimestamp": 1678658606464,
     "databaseType": "sql",
     "devDatabaseType": "postgresql",
     "dtoSuffix": "DTO",
@@ -21,6 +21,7 @@
     "entitySuffix": "",
     "jhiPrefix": "jhi",
     "jhipsterVersion": "7.9.3",
+    "jwtSecretKey": "YmYwYTFkNTczZTFmMjc5ZGMyMDYzNDBjNTBkNjJjNzFkZWI4ZWFkMGU4ZTUwZGE0MjE2OWE4Y2ZjNmZkYTdlN2Q3MmI2NDZjYzE4Y2NlMDE2MWEwYjlkMjcwODI5MzJlMTY5YTJlY2UxNmJjODgyYjU1NWU1ZmQ2N2MxYTY4Njk=",
     "languages": ["en", "fr"],
     "messageBroker": false,
     "microfrontend": false,
@@ -31,7 +32,6 @@
     "pages": [],
     "prodDatabaseType": "postgresql",
     "reactive": false,
-    "rememberMeKey": "424236f670baab3b5ce52730179c4422f5706114c1466c1db5c3a9b0d36e5ba9ed366f4ab720835c6761cbd528f66c480718",
     "searchEngine": false,
     "serverPort": "8080",
     "serverSideOptions": [],
