@@ -1,8 +1,6 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.PersistentToken;
 import com.mycompany.myapp.domain.User;
-import com.mycompany.myapp.repository.PersistentTokenRepository;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.security.SecurityUtils;
 import com.mycompany.myapp.service.MailService;
@@ -12,8 +10,6 @@ import com.mycompany.myapp.service.dto.PasswordChangeDTO;
 import com.mycompany.myapp.web.rest.errors.*;
 import com.mycompany.myapp.web.rest.vm.KeyAndPasswordVM;
 import com.mycompany.myapp.web.rest.vm.ManagedUserVM;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -45,18 +41,10 @@ public class AccountResource {
 
     private final MailService mailService;
 
-    private final PersistentTokenRepository persistentTokenRepository;
-
-    public AccountResource(
-        UserRepository userRepository,
-        UserService userService,
-        MailService mailService,
-        PersistentTokenRepository persistentTokenRepository
-    ) {
+    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
-        this.persistentTokenRepository = persistentTokenRepository;
     }
 
     /**
@@ -158,55 +146,6 @@ public class AccountResource {
             throw new InvalidPasswordException();
         }
         userService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
-    }
-
-    /**
-     * {@code GET  /account/sessions} : get the current open sessions.
-     *
-     * @return the current open sessions.
-     * @throws RuntimeException {@code 500 (Internal Server Error)} if the current open sessions couldn't be retrieved.
-     */
-    @GetMapping("/account/sessions")
-    public List<PersistentToken> getCurrentSessions() {
-        return persistentTokenRepository.findByUser(
-            userRepository
-                .findOneByLogin(
-                    SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new AccountResourceException("Current user login not found"))
-                )
-                .orElseThrow(() -> new AccountResourceException("User could not be found"))
-        );
-    }
-
-    /**
-     * {@code DELETE  /account/sessions?series={series}} : invalidate an existing session.
-     *
-     * - You can only delete your own sessions, not any other user's session
-     * - If you delete one of your existing sessions, and that you are currently logged in on that session, you will
-     *   still be able to use that session, until you quit your browser: it does not work in real time (there is
-     *   no API for that), it only removes the "remember me" cookie
-     * - This is also true if you invalidate your current session: you will still be able to use it until you close
-     *   your browser or that the session times out. But automatic login (the "remember me" cookie) will not work
-     *   anymore.
-     *   There is an API to invalidate the current session, but there is no API to check which session uses which
-     *   cookie.
-     *
-     * @param series the series of an existing session.
-     * @throws IllegalArgumentException if the series couldn't be URL decoded.
-     */
-    @DeleteMapping("/account/sessions/{series}")
-    public void invalidateSession(@PathVariable String series) {
-        String decodedSeries = URLDecoder.decode(series, StandardCharsets.UTF_8);
-        SecurityUtils
-            .getCurrentUserLogin()
-            .flatMap(userRepository::findOneByLogin)
-            .ifPresent(u ->
-                persistentTokenRepository
-                    .findByUser(u)
-                    .stream()
-                    .filter(persistentToken -> StringUtils.equals(persistentToken.getSeries(), decodedSeries))
-                    .findAny()
-                    .ifPresent(t -> persistentTokenRepository.deleteById(decodedSeries))
-            );
     }
 
     /**
