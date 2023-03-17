@@ -64,4 +64,19 @@ public class Establishment extends AbstractAuditingEntity<Long> implements Seria
     public void setAddress(Address address) {
         this.address = address;
     }
+
+    public String toString() {
+        return "Establishment{" + "name='" + name + '\'' + ", type='" + type + '\'' + ", address='" + address + '\'' + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Establishment)) {
+            return false;
+        }
+        return id != null && id.equals(((Establishment) o).id);
+    }
 }
