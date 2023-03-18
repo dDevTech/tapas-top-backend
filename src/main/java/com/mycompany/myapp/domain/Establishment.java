@@ -24,12 +24,7 @@ public class Establishment extends AbstractAuditingEntity<Long> implements Seria
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
-    @JoinTable(
-        name = "address",
-        joinColumns = { @JoinColumn(name = "id_establishment", referencedColumnName = "address") },
-        inverseJoinColumns = { @JoinColumn(name = "id_address", referencedColumnName = "id") }
-    )
-    @Column(name = "address")
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
     @Override
