@@ -66,6 +66,11 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @Column(name = "photo")
     private byte[] photo;
 
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
+
     @Column(name = "gender")
     private GenderType gender;
 
@@ -165,6 +170,14 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     public void setLastName2(String lastName2) {
         this.lastName2 = lastName2;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public byte[] getPhoto() {
