@@ -105,6 +105,9 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @Column(name = "reset_date")
     private Instant resetDate = null;
 
+    @OneToMany(mappedBy = "user")
+    private Set<User_Rating> user_ratings;
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(
