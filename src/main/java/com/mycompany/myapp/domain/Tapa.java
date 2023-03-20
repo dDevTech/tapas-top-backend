@@ -10,6 +10,9 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "tapa")
 public class Tapa {
@@ -97,6 +100,9 @@ public class Tapa {
     public void setEstablishment(Establishment establishment) {
         this.establishment = establishment;
     }
+
+    @ManyToMany(mappedBy = "favourites")
+    private Set<User> fans = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
