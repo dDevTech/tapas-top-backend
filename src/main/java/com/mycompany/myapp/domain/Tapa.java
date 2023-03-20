@@ -2,7 +2,6 @@ package com.mycompany.myapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mycompany.myapp.config.Constants;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -11,9 +10,8 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 
-
 @Entity
-@Table(name = "jhi_user")
+@Table(name = "tapa")
 public class Tapa {
 
     @Id
@@ -24,12 +22,11 @@ public class Tapa {
     @Size(max = 50)
     @Column(name = "name", length = 50)
     private String name;
-    
+
     @Size(max = 256)
     @Column(name = "description", length = 256)
     private String description;
 
-    @ManyToOne
     @Size(max = 20)
     @Column(name = "type", length = 20)
     private String type;
@@ -41,61 +38,62 @@ public class Tapa {
     @Column(name = "photo")
     private byte[] photo;
 
-    @Column(name = "establishment")
+    @ManyToOne
+    @JoinColumn(name = "establishment_id", nullable = false)
     private Establishment establishment;
-    
+
     public Long getId() {
         return id;
     }
-    
+
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getDescription() {
         return description;
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public String getType() {
         return type;
     }
-    
+
     public void setType(String type) {
         this.type = type;
     }
-    
+
     public String getCountry() {
         return country;
     }
-    
+
     public void setCountry(String country) {
         this.country = country;
     }
-    
+
     public byte[] getPhoto() {
         return photo;
     }
-    
+
     public void setPhoto(byte[] photo) {
         this.photo = photo;
     }
-    
+
     public Establishment getEstablishment() {
         return establishment;
     }
-    
+
     public void setEstablishment(Establishment establishment) {
         this.establishment = establishment;
     }
