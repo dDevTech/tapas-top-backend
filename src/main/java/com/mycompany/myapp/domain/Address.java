@@ -35,6 +35,9 @@ public class Address extends AbstractAuditingEntity<Long> implements Serializabl
     @OneToOne(mappedBy = "address")
     private Establishment establishment;
 
+    @OneToOne(mappedBy = "address")
+    private User user;
+
     @Override
     public int hashCode() {
         // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
