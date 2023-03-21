@@ -1,14 +1,8 @@
 package com.mycompany.myapp.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mycompany.myapp.config.Constants;
+import java.util.Set;
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import org.apache.commons.lang3.StringUtils;
-import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "tapa")
@@ -41,6 +35,9 @@ public class Tapa {
     @ManyToOne
     @JoinColumn(name = "establishment_id", nullable = false)
     private Establishment establishment;
+
+    @OneToMany(mappedBy = "tapa")
+    private Set<User_Rating> ratings;
 
     public Long getId() {
         return id;
