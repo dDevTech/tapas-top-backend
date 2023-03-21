@@ -42,6 +42,10 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     private String password;
 
     @Size(max = 50)
+    @Column(name = "user_name", length = 50)
+    private String userName;
+
+    @Size(max = 50)
     @Column(name = "first_name", length = 50)
     private String firstName;
 
@@ -49,10 +53,32 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @Column(name = "last_name", length = 50)
     private String lastName;
 
+    @Size(max = 50)
+    @Column(name = "last_name2", length = 50)
+    private String lastName2;
+
     @Email
     @Size(min = 5, max = 254)
     @Column(length = 254, unique = true)
     private String email;
+
+    @Lob
+    @Column(name = "photo")
+    private byte[] photo;
+
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
+
+    @Column(name = "gender")
+    private GenderType gender;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "country")
+    private String country;
 
     @NotNull
     @Column(nullable = false)
@@ -78,6 +104,9 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     @Column(name = "reset_date")
     private Instant resetDate = null;
+
+    @OneToMany(mappedBy = "user")
+    private Set<User_Rating> user_ratings;
 
     @JsonIgnore
     @ManyToMany
@@ -106,6 +135,14 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
         this.login = StringUtils.lowerCase(login, Locale.ENGLISH);
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -128,6 +165,54 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getLastName2() {
+        return lastName2;
+    }
+
+    public void setLastName2(String lastName2) {
+        this.lastName2 = lastName2;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
+    public GenderType getGender() {
+        return gender;
+    }
+
+    public void setGender(GenderType gender) {
+        this.gender = gender;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getEmail() {
