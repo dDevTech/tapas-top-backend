@@ -24,14 +24,26 @@ public class AdminUserDTO implements Serializable {
     private String login;
 
     @Size(max = 50)
+    private String userName;
+
+    @Size(max = 50)
     private String firstName;
 
     @Size(max = 50)
     private String lastName;
 
+    @Size(max = 50)
+    private String lastName2;
+
     @Email
     @Size(min = 5, max = 254)
     private String email;
+
+    private byte[] photo;
+
+    private String gender;
+
+    private String description;
 
     @Size(max = 256)
     private String imageUrl;
@@ -58,9 +70,14 @@ public class AdminUserDTO implements Serializable {
     public AdminUserDTO(User user) {
         this.id = user.getId();
         this.login = user.getLogin();
+        this.userName = user.getUserName();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.lastName2 = user.getLastName2();
         this.email = user.getEmail();
+        this.photo = user.getPhoto();
+        this.gender = user.getGender().name();
+        this.description = user.getDescription();
         this.activated = user.isActivated();
         this.imageUrl = user.getImageUrl();
         this.langKey = user.getLangKey();
@@ -87,6 +104,14 @@ public class AdminUserDTO implements Serializable {
         this.login = login;
     }
 
+    public String getuserName() {
+        return userName;
+    }
+
+    public void setuserName(String userName) {
+        this.userName = userName;
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -103,12 +128,44 @@ public class AdminUserDTO implements Serializable {
         this.lastName = lastName;
     }
 
+    public String getLastName2() {
+        return lastName2;
+    }
+
+    public void setLastName2(String lastName2) {
+        this.lastName2 = lastName2;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getImageUrl() {
@@ -180,9 +237,13 @@ public class AdminUserDTO implements Serializable {
     public String toString() {
         return "AdminUserDTO{" +
             "login='" + login + '\'' +
+            ", userName='" + userName + '\'' +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
+            ", lastName2='" + lastName2 + '\'' +
             ", email='" + email + '\'' +
+            ", gender='" + gender + '\'' +
+            ", description='" + description + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
             ", activated=" + activated +
             ", langKey='" + langKey + '\'' +
