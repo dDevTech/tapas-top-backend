@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "user_rating")
-public class User_Rating {
+public class User_Rating extends AbstractAuditingEntity<Long> {
 
     private static final long serialVersionUID = 1L;
 
@@ -20,10 +20,6 @@ public class User_Rating {
     @NotNull
     @Column(name = "rating")
     private int rating;
-
-    @NotNull
-    @Column(name = "date")
-    private Date date;
 
     @ManyToOne
     @JoinColumn(name = "tapa_id", nullable = false)
@@ -47,14 +43,6 @@ public class User_Rating {
 
     public void setRating(int rating) {
         this.rating = rating;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
     }
 
     public Tapa getTapa() {
@@ -86,20 +74,6 @@ public class User_Rating {
 
     @Override
     public String toString() {
-        return (
-            "UserRating{" +
-            "rating='" +
-            rating +
-            '\'' +
-            ", date='" +
-            date +
-            '\'' +
-            ", tapa='" +
-            tapa.toString() +
-            '\'' +
-            ", user='" +
-            user.toString() +
-            "}"
-        );
+        return ("UserRating{" + "rating='" + rating + '\'' + ", tapa='" + tapa.toString() + '\'' + ", user='" + user.toString() + "}");
     }
 }

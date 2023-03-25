@@ -1,15 +1,14 @@
 package com.mycompany.myapp.domain;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "tapa")
-public class Tapa {
+public class Tapa extends AbstractAuditingEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
