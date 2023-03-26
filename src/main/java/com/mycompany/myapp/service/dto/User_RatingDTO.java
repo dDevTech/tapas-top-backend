@@ -27,7 +27,6 @@ public class User_RatingDTO implements Serializable {
     public User_RatingDTO(User_Rating userRating) {
         this.id = userRating.getId();
         this.rating = userRating.getRating();
-        this.date = userRating.getDate();
         this.createdBy = userRating.getCreatedBy();
         this.createdDate = userRating.getCreatedDate();
         this.lastModifiedBy = userRating.getLastModifiedBy();
