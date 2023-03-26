@@ -8,18 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tapa")
+@RequestMapping("/api/tapa")
 public class TapaResource {
 
     private final Logger log = LoggerFactory.getLogger(TapaResource.class);
-
 
     private final TapaService tapaService;
 
     private final TapaRepository tapaRepository;
 
-
-    public TapaResource(TapaRepository tapaRepository, TapaService tapaService){
+    public TapaResource(TapaRepository tapaRepository, TapaService tapaService) {
         this.tapaRepository = tapaRepository;
         this.tapaService = tapaService;
     }

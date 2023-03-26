@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/establishment")
+@RequestMapping("/api/establishment")
 public class EstablishmentResource {
+
     private final Logger log = LoggerFactory.getLogger(EstablishmentResource.class);
 
     private final EstablishmentService establishmentService;
 
     private final EstablishmentRepository establishmentRepository;
 
-
-    public EstablishmentResource(EstablishmentRepository establishmentRepository, EstablishmentService establishmentService){
+    public EstablishmentResource(EstablishmentRepository establishmentRepository, EstablishmentService establishmentService) {
         this.establishmentRepository = establishmentRepository;
         this.establishmentService = establishmentService;
     }
