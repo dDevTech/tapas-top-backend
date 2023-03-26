@@ -2,15 +2,17 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.Establishment;
 import com.mycompany.myapp.repository.EstablishmentRepository;
+import java.util.List;
+import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
+@Transactional
 public class EstablishmentService {
+
     private final Logger log = LoggerFactory.getLogger(EstablishmentService.class);
 
     @Autowired

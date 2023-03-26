@@ -2,15 +2,17 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.Tapa;
 import com.mycompany.myapp.repository.TapaRepository;
+import java.util.List;
+import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
+@Transactional
 public class TapaService {
+
     private final Logger log = LoggerFactory.getLogger(TapaService.class);
 
     @Autowired
@@ -31,5 +33,4 @@ public class TapaService {
     public void deleteById(Long id) {
         tapaRepository.deleteById(id);
     }
-
 }

@@ -2,18 +2,18 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.User_Rating;
 import com.mycompany.myapp.repository.User_RatingRepository;
+import java.util.List;
+import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
+@Transactional
 public class User_RatingService {
 
     private final Logger log = LoggerFactory.getLogger(User_RatingService.class);
-
 
     @Autowired
     private User_RatingRepository userRatingRepository;
