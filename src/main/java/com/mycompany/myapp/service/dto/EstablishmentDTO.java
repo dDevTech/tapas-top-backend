@@ -1,11 +1,17 @@
 package com.mycompany.myapp.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.mycompany.myapp.domain.Address;
 import com.mycompany.myapp.domain.Establishment;
 import com.mycompany.myapp.domain.Establishment_;
+import com.mycompany.myapp.domain.Tapa;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EstablishmentDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -15,6 +21,10 @@ public class EstablishmentDTO implements Serializable {
     private String name;
 
     private String type;
+
+    private AddressDTO address;
+
+    private Set<TapaDTO> tapas;
 
     private String createdBy;
 
@@ -32,6 +42,12 @@ public class EstablishmentDTO implements Serializable {
         this.createdDate = establishment.getCreatedDate();
         this.lastModifiedBy = establishment.getLastModifiedBy();
         this.lastModifiedDate = establishment.getLastModifiedDate();
+    }
+
+    public EstablishmentDTO(Establishment establishment, Address address, Set<Tapa> tapas) {
+        this(establishment);
+        this.address = address != null ? new AddressDTO(address) : null;
+        this.tapas = tapas != null ? tapas.stream().map(TapaDTO::new).collect(Collectors.toSet()) : null;
     }
 
     public Long getId() {
@@ -56,6 +72,22 @@ public class EstablishmentDTO implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public AddressDTO getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDTO address) {
+        this.address = address;
+    }
+
+    public Set<TapaDTO> getTapas() {
+        return tapas;
+    }
+
+    public void setTapas(Set<TapaDTO> tapas) {
+        this.tapas = tapas;
     }
 
     public String getCreatedBy() {

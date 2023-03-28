@@ -14,6 +14,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Type;
 
 /**
  * A user.
@@ -62,12 +63,11 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @Column(length = 254, unique = true)
     private String email;
 
-    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
     @Column(name = "photo")
     private byte[] photo;
 
-    @NotNull
-    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
@@ -76,9 +76,6 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     @Column(name = "description")
     private String description;
-
-    @Column(name = "country")
-    private String country;
 
     @NotNull
     @Column(nullable = false)
@@ -209,14 +206,6 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
     }
 
     public String getEmail() {

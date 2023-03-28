@@ -1,11 +1,17 @@
 package com.mycompany.myapp.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.mycompany.myapp.domain.Establishment;
 import com.mycompany.myapp.domain.Tapa;
+import com.mycompany.myapp.domain.User_Rating;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.constraints.Size;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TapaDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,6 +32,10 @@ public class TapaDTO implements Serializable {
 
     private byte[] photo;
 
+    private EstablishmentDTO establishment;
+
+    private Set<User_RatingDTO> ratings;
+
     private String createdBy;
 
     private Instant createdDate;
@@ -45,6 +55,12 @@ public class TapaDTO implements Serializable {
         this.createdDate = tapa.getCreatedDate();
         this.lastModifiedBy = tapa.getLastModifiedBy();
         this.lastModifiedDate = tapa.getLastModifiedDate();
+    }
+
+    public TapaDTO(Tapa tapa, Establishment establishment, Set<User_Rating> ratings) {
+        this(tapa);
+        this.establishment = establishment != null ? new EstablishmentDTO(establishment) : null;
+        this.ratings = ratings != null ? ratings.stream().map(User_RatingDTO::new).collect(Collectors.toSet()) : null;
     }
 
     public Long getId() {
@@ -93,6 +109,22 @@ public class TapaDTO implements Serializable {
 
     public void setPhoto(byte[] photo) {
         this.photo = photo;
+    }
+
+    public EstablishmentDTO getEstablishment() {
+        return establishment;
+    }
+
+    public void setEstablishment(EstablishmentDTO establishment) {
+        this.establishment = establishment;
+    }
+
+    public Set<User_RatingDTO> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<User_RatingDTO> ratings) {
+        this.ratings = ratings;
     }
 
     public String getCreatedBy() {

@@ -1,8 +1,8 @@
 package com.mycompany.myapp.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mycompany.myapp.config.Constants;
-import com.mycompany.myapp.domain.Authority;
-import com.mycompany.myapp.domain.User;
+import com.mycompany.myapp.domain.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
@@ -12,6 +12,7 @@ import javax.validation.constraints.*;
 /**
  * A DTO representing a user, with his authorities.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AdminUserDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,6 +42,8 @@ public class AdminUserDTO implements Serializable {
 
     private byte[] photo;
 
+    private AddressDTO address;
+
     private String gender;
 
     private String description;
@@ -52,6 +55,10 @@ public class AdminUserDTO implements Serializable {
 
     @Size(min = 2, max = 10)
     private String langKey;
+
+    private Set<TapaDTO> favorites;
+
+    private Set<User_RatingDTO> ratings;
 
     private String createdBy;
 
@@ -88,6 +95,13 @@ public class AdminUserDTO implements Serializable {
         this.authorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
     }
 
+    public AdminUserDTO(User user, Address address, Set<Tapa> favorites, Set<User_Rating> ratings) {
+        this(user);
+        this.address = address != null ? new AddressDTO(address) : null;
+        this.favorites = favorites != null ? favorites.stream().map(TapaDTO::new).collect(Collectors.toSet()) : null;
+        this.ratings = ratings != null ? ratings.stream().map(User_RatingDTO::new).collect(Collectors.toSet()) : null;
+    }
+
     public Long getId() {
         return id;
     }
@@ -104,11 +118,11 @@ public class AdminUserDTO implements Serializable {
         this.login = login;
     }
 
-    public String getuserName() {
+    public String getUserName() {
         return userName;
     }
 
-    public void setuserName(String userName) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
@@ -230,6 +244,30 @@ public class AdminUserDTO implements Serializable {
 
     public void setAuthorities(Set<String> authorities) {
         this.authorities = authorities;
+    }
+
+    public AddressDTO getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDTO address) {
+        this.address = address;
+    }
+
+    public Set<TapaDTO> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(Set<TapaDTO> favorites) {
+        this.favorites = favorites;
+    }
+
+    public Set<User_RatingDTO> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<User_RatingDTO> ratings) {
+        this.ratings = ratings;
     }
 
     // prettier-ignore
