@@ -1,11 +1,15 @@
 package com.mycompany.myapp.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mycompany.myapp.domain.Address;
+import com.mycompany.myapp.domain.Establishment;
+import com.mycompany.myapp.domain.User;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import javax.validation.constraints.Size;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AddressDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -20,6 +24,10 @@ public class AddressDTO implements Serializable {
 
     @Size(max = 256)
     private String address;
+
+    private AdminUserDTO user;
+
+    private EstablishmentDTO establishment;
 
     private String createdBy;
 
@@ -37,6 +45,12 @@ public class AddressDTO implements Serializable {
         this.createdDate = address.getCreatedDate();
         this.lastModifiedBy = address.getLastModifiedBy();
         this.lastModifiedDate = address.getLastModifiedDate();
+    }
+
+    public AddressDTO(Address address, User user, Establishment establishment) {
+        this(address);
+        this.user = new AdminUserDTO(user);
+        this.establishment = new EstablishmentDTO(establishment);
     }
 
     public Long getId() {
@@ -69,6 +83,22 @@ public class AddressDTO implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public AdminUserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(AdminUserDTO user) {
+        this.user = user;
+    }
+
+    public EstablishmentDTO getEstablishment() {
+        return establishment;
+    }
+
+    public void setEstablishment(EstablishmentDTO establishment) {
+        this.establishment = establishment;
     }
 
     public String getCreatedBy() {

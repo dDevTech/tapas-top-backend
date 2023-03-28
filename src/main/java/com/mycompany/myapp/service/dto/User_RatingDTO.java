@@ -1,16 +1,24 @@
 package com.mycompany.myapp.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.mycompany.myapp.domain.Tapa;
+import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.domain.User_Rating;
 import java.io.Serializable;
 import java.sql.Date;
 import java.time.Instant;
 import java.util.Objects;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User_RatingDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
+
+    private AdminUserDTO user;
+
+    private TapaDTO tapa;
 
     private int rating;
 
@@ -33,12 +41,34 @@ public class User_RatingDTO implements Serializable {
         this.lastModifiedDate = userRating.getLastModifiedDate();
     }
 
+    public User_RatingDTO(User_Rating userRating, User user, Tapa tapa) {
+        this(userRating);
+        this.user = user != null ? new AdminUserDTO(user) : null;
+        this.tapa = tapa != null ? new TapaDTO(tapa) : null;
+    }
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public AdminUserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(AdminUserDTO user) {
+        this.user = user;
+    }
+
+    public TapaDTO getTapa() {
+        return tapa;
+    }
+
+    public void setTapa(TapaDTO tapa) {
+        this.tapa = tapa;
     }
 
     public int getRating() {

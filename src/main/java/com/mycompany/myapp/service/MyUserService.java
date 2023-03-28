@@ -37,7 +37,9 @@ public class MyUserService {
             .map(User::getFavourites)
             .orElse(Collections.emptySet())
             .stream()
-            .map(TapaDTO::new)
+            .map(tapa -> {
+                return new TapaDTO(tapa, tapa.getEstablishment(), null);
+            })
             .collect(Collectors.toList());
         return tapaDTOList;
     }
