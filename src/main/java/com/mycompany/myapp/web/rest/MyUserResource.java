@@ -1,12 +1,10 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.service.MyUserService;
 import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.service.dto.TapaDTO;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +28,12 @@ public class MyUserResource {
     @GetMapping("/favourites/{login}")
     public ResponseEntity<List<TapaDTO>> getFavouritesTapas(@PathVariable String login) {
         List<TapaDTO> tapaDTOList = myUserService.getFavourites(login);
+        return ResponseEntity.ok(tapaDTOList);
+    }
+
+    @GetMapping("/lastTapas/{login}")
+    public ResponseEntity<List<TapaDTO>> getLastTapas(@PathVariable String login) {
+        List<TapaDTO> tapaDTOList = myUserService.getLastTapas(login);
         return ResponseEntity.ok(tapaDTOList);
     }
 }
