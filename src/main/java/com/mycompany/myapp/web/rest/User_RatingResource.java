@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/rating")
+@RequestMapping("/api/rating")
 public class User_RatingResource {
 
     private final Logger log = LoggerFactory.getLogger(User_RatingResource.class);
@@ -17,10 +17,8 @@ public class User_RatingResource {
 
     private final User_RatingRepository user_RatingRepository;
 
-
-    public User_RatingResource(User_RatingRepository user_RatingRepository, User_RatingService user_RatingService){
+    public User_RatingResource(User_RatingRepository user_RatingRepository, User_RatingService user_RatingService) {
         this.user_RatingRepository = user_RatingRepository;
         this.user_RatingService = user_RatingService;
     }
-
 }

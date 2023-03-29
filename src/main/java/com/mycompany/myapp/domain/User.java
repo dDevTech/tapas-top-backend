@@ -14,6 +14,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Type;
 
 /**
  * A user.
@@ -62,12 +63,11 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @Column(length = 254, unique = true)
     private String email;
 
-    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
     @Column(name = "photo")
     private byte[] photo;
 
-    @NotNull
-    @OneToOne(cascade = CascadeType.ALL, optional = false, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
@@ -76,9 +76,6 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     @Column(name = "description")
     private String description;
-
-    @Column(name = "country")
-    private String country;
 
     @NotNull
     @Column(nullable = false)
@@ -106,14 +103,11 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     private Instant resetDate = null;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-        name = "user_favourites",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "tapa_id"))
+    @JoinTable(name = "user_favourites", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tapa_id"))
     private Set<Tapa> favourites = new HashSet<>();
+
     @OneToMany(mappedBy = "user")
     private Set<User_Rating> user_ratings;
-
 
     @JsonIgnore
     @ManyToMany
@@ -214,14 +208,6 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
         this.description = description;
     }
 
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -286,6 +272,22 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
         this.authorities = authorities;
     }
 
+    public Set<Tapa> getFavourites() {
+        return favourites;
+    }
+
+    public void setFavourites(Set<Tapa> favourites) {
+        this.favourites = favourites;
+    }
+
+    public Set<User_Rating> getUser_ratings() {
+        return user_ratings;
+    }
+
+    public void setUser_ratings(Set<User_Rating> user_ratings) {
+        this.user_ratings = user_ratings;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -317,5 +319,4 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
             ", activationKey='" + activationKey + '\'' +
             "}";
     }
-
 }
