@@ -7,7 +7,7 @@ import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.service.dto.TapaDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -58,16 +58,16 @@ public class MyUserService {
             throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
         }
 
-        LocalDate today = java.time.LocalDate.now();
+        Instant today = Instant.now();
 
-        List<Tapa> tapas = tapaRepository.findAllByCreatedByOrderByCreatedDate(user.get().getId().toString());
+        List<Tapa> tapas = tapaRepository.findAllByCreatedByOrderByCreatedDateDesc(user.get().getId().toString());
 
         List<TapaDTO> res = tapas
             .stream()
             .map(tapa -> {
                 return new TapaDTO(tapa, tapa.getEstablishment(), null);
             })
-            .filter(tapaDTO -> tapaDTO.getCreatedDate().isAfter(Instant.from(today.minusDays(7))))
+            .filter(tapaDTO -> tapaDTO.getCreatedDate().isAfter(Instant.from(today.minus(7, ChronoUnit.DAYS))))
             .collect(Collectors.toList());
 
         return res;

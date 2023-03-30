@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TapaRepository extends JpaRepository<Tapa, Long> {
-    List<Tapa> findAllByCreatedByOrderByCreatedDate(String id_usuario);
+    List<Tapa> findAllByCreatedByOrderByCreatedDateDesc(String id_usuario);
 }
