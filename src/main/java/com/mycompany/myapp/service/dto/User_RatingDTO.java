@@ -20,7 +20,7 @@ public class User_RatingDTO implements Serializable {
 
     private TapaDTO tapa;
 
-    private int rating;
+    private Double rating;
 
     private Date date;
 
@@ -71,11 +71,11 @@ public class User_RatingDTO implements Serializable {
         this.tapa = tapa;
     }
 
-    public int getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 

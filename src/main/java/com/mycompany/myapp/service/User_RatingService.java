@@ -33,4 +33,12 @@ public class User_RatingService {
     public void deleteById(Long id) {
         userRatingRepository.deleteById(id);
     }
+
+    public Double findAllByTapaId(Long id) {
+        return userRatingRepository.findAllByTapaId(id).stream().mapToDouble(userRating -> userRating.getRating()).average().orElse(0);
+    }
+
+    public User_Rating findByTapaIdAndUserId(Long id_tapa, Long id_usuario) {
+        return userRatingRepository.findAllByUserIdAndTapaId(id_usuario, id_tapa).get(0);
+    }
 }
