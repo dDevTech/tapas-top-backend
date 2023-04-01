@@ -52,7 +52,7 @@ public class MyUserService {
                 return new TapaDTO(
                     tapa,
                     tapa.getEstablishment(),
-                    user_ratingService.findAllByTapaId(tapa.getId()),
+                    user_ratingService.getTapaRatingAverage(tapa.getId()),
                     user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId())
                 );
             })
@@ -74,7 +74,7 @@ public class MyUserService {
         List<TapaDTO> res = tapas
             .stream()
             .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.findAllByTapaId(tapa.getId()), null);
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
                 User_RatingDTO ratingDTO = new User_RatingDTO(user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId()));
                 tapaDTO.setRating(ratingDTO);
                 return tapaDTO;

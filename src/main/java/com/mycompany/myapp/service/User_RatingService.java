@@ -34,7 +34,7 @@ public class User_RatingService {
         userRatingRepository.deleteById(id);
     }
 
-    public Double findAllByTapaId(Long id) {
+    public Double getTapaRatingAverage(Long id) {
         return userRatingRepository.findAllByTapaId(id).stream().mapToDouble(userRating -> userRating.getRating()).average().orElse(0);
     }
 
