@@ -163,7 +163,9 @@ public class UserService {
 
         user.setDescription(userDTO.getDescription());
         user.setImageUrl(userDTO.getImageUrl());
-        if (userDTO.getAddress() != null) user.setAddress(addressService.findById(userDTO.getAddress().getId()));
+        if (userDTO.getAddress() != null) {
+            user.setAddress(userDTO.getAddress().toAddress());
+        }
         if (userDTO.getLangKey() == null) {
             user.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
         } else {
@@ -212,7 +214,7 @@ public class UserService {
                 }
                 if (userDTO.getGender() != null) user.setGender(GenderType.fromString(userDTO.getGender()));
                 user.setImageUrl(userDTO.getImageUrl());
-                if (userDTO.getAddress() != null) user.setAddress(addressService.findById(userDTO.getAddress().getId()));
+                if (userDTO.getAddress() != null) user.setAddress(userDTO.getAddress().toAddress());
                 user.setDescription(userDTO.getDescription());
                 user.setActivated(userDTO.isActivated());
                 user.setLangKey(userDTO.getLangKey());
