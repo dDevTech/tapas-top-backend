@@ -160,9 +160,10 @@ public class UserService {
             user.setEmail(userDTO.getEmail().toLowerCase());
         }
         if (userDTO.getGender() != null) user.setGender(GenderType.fromString(userDTO.getGender()));
+
         user.setDescription(userDTO.getDescription());
         user.setImageUrl(userDTO.getImageUrl());
-        user.setAddress(addressService.findById(userDTO.getAddress().getId()));
+        if (userDTO.getAddress() != null) user.setAddress(addressService.findById(userDTO.getAddress().getId()));
         if (userDTO.getLangKey() == null) {
             user.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
         } else {
