@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.validation.constraints.Size;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -35,6 +34,7 @@ public class TapaDTO implements Serializable {
     private EstablishmentDTO establishment;
 
     private Set<User_RatingDTO> ratings;
+    private User_RatingDTO rating;
 
     private String createdBy;
 
@@ -43,6 +43,8 @@ public class TapaDTO implements Serializable {
     private String lastModifiedBy;
 
     private Instant lastModifiedDate;
+
+    private Double average;
 
     public TapaDTO(Tapa tapa) {
         this.id = tapa.getId();
@@ -57,10 +59,11 @@ public class TapaDTO implements Serializable {
         this.lastModifiedDate = tapa.getLastModifiedDate();
     }
 
-    public TapaDTO(Tapa tapa, Establishment establishment, Set<User_Rating> ratings) {
+    public TapaDTO(Tapa tapa, Establishment establishment, Double average, User_Rating user_rating) {
         this(tapa);
         this.establishment = establishment != null ? new EstablishmentDTO(establishment) : null;
-        this.ratings = ratings != null ? ratings.stream().map(User_RatingDTO::new).collect(Collectors.toSet()) : null;
+        this.rating = rating != null ? new User_RatingDTO(user_rating) : null;
+        this.average = average;
     }
 
     public Long getId() {
@@ -157,6 +160,22 @@ public class TapaDTO implements Serializable {
 
     public void setLastModifiedDate(Instant lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public User_RatingDTO getRating() {
+        return rating;
+    }
+
+    public void setRating(User_RatingDTO rating) {
+        this.rating = rating;
+    }
+
+    public Double getAverage() {
+        return average;
+    }
+
+    public void setAverage(Double average) {
+        this.average = average;
     }
 
     @Override
