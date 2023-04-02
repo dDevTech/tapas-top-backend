@@ -1,9 +1,12 @@
 package com.mycompany.myapp.service;
 
+import com.mycompany.myapp.domain.Establishment;
 import com.mycompany.myapp.domain.Tapa;
 import com.mycompany.myapp.domain.User;
+import com.mycompany.myapp.repository.EstablishmentRepository;
 import com.mycompany.myapp.repository.TapaRepository;
 import com.mycompany.myapp.repository.UserRepository;
+import com.mycompany.myapp.service.dto.EstablishmentDTO;
 import com.mycompany.myapp.service.dto.TapaDTO;
 import com.mycompany.myapp.service.dto.User_RatingDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
@@ -36,6 +39,9 @@ public class MyUserService {
 
     @Autowired
     private User_RatingService user_ratingService;
+
+    @Autowired
+    private EstablishmentRepository establishmentRepository;
 
     public List<TapaDTO> getFavourites(String login) {
         Optional<User> user = userRepository.findOneByLogin(login);
@@ -81,6 +87,26 @@ public class MyUserService {
             })
             .filter(tapaDTO -> tapaDTO.getCreatedDate().isAfter(Instant.from(today.minus(7, ChronoUnit.DAYS))))
             .collect(Collectors.toList());
+        return res;
+    }
+
+
+    public List<EstablishmentDTO> getAllRestaurants(String login){
+        Optional<User> user = userRepository.findOneByLogin(login);
+
+        if (!user.isPresent()) {
+            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
+        }
+        List<Establishment> establishments = establishmentRepository.findAllByCreatedByOrderByCreatedDateDesc(user.get().getId().toString());
+
+        List<EstablishmentDTO> res = establishments
+            .stream()
+            .map(establishment -> {
+                EstablishmentDTO establishmentDTO = new EstablishmentDTO(establishment);
+                return establishmentDTO;
+            })
+            .collect(Collectors.toList());
+
         return res;
     }
 }
