@@ -26,6 +26,10 @@ public class AddressService {
         return addressRepository.findById(id).orElse(null);
     }
 
+    public Address findByAddressAndCityAndCountry(String address, String city, String country) {
+        return addressRepository.findByAddressAndCityAndCountry(address, city, country).orElse(null);
+    }
+
     public Address save(Address address) {
         return addressRepository.save(address);
     }

@@ -5,12 +5,15 @@ import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.security.SecurityUtils;
 import com.mycompany.myapp.service.MailService;
 import com.mycompany.myapp.service.UserService;
+import com.mycompany.myapp.service.UsernameAlreadyUsedException;
 import com.mycompany.myapp.service.dto.AdminUserDTO;
 import com.mycompany.myapp.service.dto.PasswordChangeDTO;
-import com.mycompany.myapp.web.rest.errors.*;
+import com.mycompany.myapp.web.rest.errors.EmailAlreadyUsedException;
+import com.mycompany.myapp.web.rest.errors.InvalidPasswordException;
+import com.mycompany.myapp.web.rest.errors.LoginAlreadyUsedException;
 import com.mycompany.myapp.web.rest.vm.KeyAndPasswordVM;
 import com.mycompany.myapp.web.rest.vm.ManagedUserVM;
-import java.util.*;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
@@ -121,16 +124,28 @@ public class AccountResource {
         if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))) {
             throw new EmailAlreadyUsedException();
         }
+
         Optional<User> user = userRepository.findOneByLogin(userLogin);
         if (!user.isPresent()) {
             throw new AccountResourceException("User could not be found");
         }
+        if (userDTO.getLogin() != null) {
+            Optional<User> userWithSameLogin = userRepository.findOneByLogin(userDTO.getLogin());
+            if (userWithSameLogin.isPresent()) {
+                throw new UsernameAlreadyUsedException();
+            }
+        }
         userService.updateUser(
+            userDTO.getLogin(),
             userDTO.getFirstName(),
             userDTO.getLastName(),
+            userDTO.getLastName2(),
             userDTO.getEmail(),
+            userDTO.getAddress(),
+            userDTO.getGender(),
             userDTO.getLangKey(),
-            userDTO.getImageUrl()
+            userDTO.getImageUrl(),
+            userDTO.getDescription()
         );
     }
 
