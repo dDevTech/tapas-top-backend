@@ -43,4 +43,21 @@ public class MyUserService {
             .collect(Collectors.toList());
         return tapaDTOList;
     }
+    
+    public List<TapaDTO> getLastRestaurants(String login) {
+        Optional<User> user = userRepository.findOneByLogin(login);
+
+        if (!user.isPresent()) {
+            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
+        }
+
+        LocalDate lastWeek = LocalDate.now().minusDays(7);
+
+        List<TapaDTO> tapaDTOList = tapaRepository.findByCreatedByAndCreatedDateAfter(user.get(), lastWeek)
+            .stream()
+            .map(tapa -> new TapaDTO(tapa, tapa.getEstablishment(), null))
+            .collect(Collectors.toList());
+
+        return tapaDTOList;
+    }
 }

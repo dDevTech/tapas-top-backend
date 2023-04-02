@@ -32,4 +32,11 @@ public class MyUserResource {
         List<TapaDTO> tapaDTOList = myUserService.getFavourites(login);
         return ResponseEntity.ok(tapaDTOList);
     }
+
+    @GetMapping("/lastRestaurants/{userId}")
+    public ResponseEntity<List<String>> getLastRestaurants(@PathVariable Long userId,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate) {
+        List<EstablishmentDTO> restaurantNames = myUserService.getLastRestaurants(userId, fromDate);
+        return ResponseEntity.ok(restaurantNames);
+    }
 }
