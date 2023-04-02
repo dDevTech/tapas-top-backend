@@ -138,16 +138,7 @@ public class UserService {
             newUser.setLangKey(userDTO.getLangKey());
         }
         if (userDTO.getAddress() != null) {
-            if (
-                addressService.findByAddressAndCityAndCountry(
-                    userDTO.getAddress().getAddress(),
-                    userDTO.getAddress().getCity(),
-                    userDTO.getAddress().getCountry()
-                ) !=
-                null
-            ) throw new AddressAlreadyUsedException(); else {
-                newUser.setAddress(userDTO.getAddress().toAddress());
-            }
+            newUser.setAddress(userDTO.getAddress().toAddress());
         }
         // new user is not active
         newUser.setActivated(false);
@@ -186,16 +177,7 @@ public class UserService {
         user.setDescription(userDTO.getDescription());
         user.setImageUrl(userDTO.getImageUrl());
         if (userDTO.getAddress() != null) {
-            if (
-                addressService.findByAddressAndCityAndCountry(
-                    userDTO.getAddress().getAddress(),
-                    userDTO.getAddress().getCity(),
-                    userDTO.getAddress().getCountry()
-                ) !=
-                null
-            ) throw new AddressAlreadyUsedException(); else {
-                user.setAddress(userDTO.getAddress().toAddress());
-            }
+            user.setAddress(userDTO.getAddress().toAddress());
         }
         if (userDTO.getLangKey() == null) {
             user.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
@@ -244,22 +226,11 @@ public class UserService {
                 if (userDTO.getGender() != null) user.setGender(GenderType.fromString(userDTO.getGender()));
                 if (userDTO.getImageUrl() != null) user.setImageUrl(userDTO.getImageUrl());
                 if (userDTO.getAddress() != null) {
-                    if (
-                        addressService.findByAddressAndCityAndCountry( //Comprobar que la dirección no haya sido usada por otro
-                            userDTO.getAddress().getAddress(),
-                            userDTO.getAddress().getCity(),
-                            userDTO.getAddress().getCountry()
-                        ) !=
-                        null
-                    ) throw new AddressAlreadyUsedException(); else {
-                        if (user != null) {
-                            if (user.getAddress() != null) {
-                                user.getAddress().setAddress(userDTO.getAddress().getAddress());
-                                user.getAddress().setCity(userDTO.getAddress().getCity());
-                                user.getAddress().setCountry(userDTO.getAddress().getCountry());
-                            } else user.setAddress(userDTO.getAddress().toAddress());
-                        }
-                    }
+                    if (user.getAddress() != null) {
+                        user.getAddress().setAddress(userDTO.getAddress().getAddress());
+                        user.getAddress().setCity(userDTO.getAddress().getCity());
+                        user.getAddress().setCountry(userDTO.getAddress().getCountry());
+                    } else user.setAddress(userDTO.getAddress().toAddress());
                 }
                 if (userDTO.getDescription() != null) user.setDescription(userDTO.getDescription());
                 user.setActivated(userDTO.isActivated());
@@ -312,22 +283,11 @@ public class UserService {
                 if (lastName2 != null) user.setLastName2(lastName2);
                 if (email != null) user.setEmail(email.toLowerCase());
                 if (address != null) {
-                    if (
-                        addressService.findByAddressAndCityAndCountry( //Comprobar que la dirección no haya sido usada por otro
-                            address.getAddress(),
-                            address.getCity(),
-                            address.getCountry()
-                        ) !=
-                        null
-                    ) throw new AddressAlreadyUsedException(); else {
-                        if (user != null) {
-                            if (user.getAddress() != null) {
-                                user.getAddress().setAddress(address.getAddress());
-                                user.getAddress().setCity(address.getCity());
-                                user.getAddress().setCountry(address.getCountry());
-                            } else user.setAddress(address.toAddress());
-                        }
-                    }
+                    if (user.getAddress() != null) {
+                        user.getAddress().setAddress(address.getAddress());
+                        user.getAddress().setCity(address.getCity());
+                        user.getAddress().setCountry(address.getCountry());
+                    } else user.setAddress(address.toAddress());
                 }
                 if (gender != null) user.setGender(GenderType.fromString(gender));
                 if (langKey != null) user.setLangKey(langKey);

@@ -129,7 +129,7 @@ public class AccountResource {
         if (!user.isPresent()) {
             throw new AccountResourceException("User could not be found");
         }
-        if (userDTO.getLogin() != null) {
+        if (userDTO.getLogin() != null && !userDTO.getLogin().equals(userLogin)) {
             Optional<User> userWithSameLogin = userRepository.findOneByLogin(userDTO.getLogin());
             if (userWithSameLogin.isPresent()) {
                 throw new UsernameAlreadyUsedException();
