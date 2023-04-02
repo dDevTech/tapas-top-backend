@@ -49,12 +49,10 @@ public class MyUserService {
             .orElse(Collections.emptySet())
             .stream()
             .map(tapa -> {
-                return new TapaDTO(
-                    tapa,
-                    tapa.getEstablishment(),
-                    user_ratingService.getTapaRatingAverage(tapa.getId()),
-                    user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId())
-                );
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
+                User_RatingDTO ratingDTO = new User_RatingDTO(user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId()));
+                tapaDTO.setRating(ratingDTO);
+                return tapaDTO;
             })
             .collect(Collectors.toList());
         return tapaDTOList;
