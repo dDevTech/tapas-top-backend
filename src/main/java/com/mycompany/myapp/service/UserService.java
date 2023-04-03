@@ -2,11 +2,13 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.config.Constants;
 import com.mycompany.myapp.domain.Authority;
+import com.mycompany.myapp.domain.GenderType;
 import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.AuthorityRepository;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.security.AuthoritiesConstants;
 import com.mycompany.myapp.security.SecurityUtils;
+import com.mycompany.myapp.service.dto.AddressDTO;
 import com.mycompany.myapp.service.dto.AdminUserDTO;
 import com.mycompany.myapp.service.dto.UserDTO;
 import java.time.Instant;
@@ -41,16 +43,20 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    private final AddressService addressService;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager
+        CacheManager cacheManager,
+        AddressService addressService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.addressService = addressService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -117,11 +123,23 @@ public class UserService {
         newUser.setPassword(encryptedPassword);
         newUser.setFirstName(userDTO.getFirstName());
         newUser.setLastName(userDTO.getLastName());
+        newUser.setLastName2(userDTO.getLastName2());
         if (userDTO.getEmail() != null) {
             newUser.setEmail(userDTO.getEmail().toLowerCase());
         }
+        if (userDTO.getGender() != null) {
+            newUser.setGender(GenderType.fromString(userDTO.getGender()));
+        }
+        newUser.setDescription(userDTO.getDescription());
         newUser.setImageUrl(userDTO.getImageUrl());
-        newUser.setLangKey(userDTO.getLangKey());
+        if (userDTO.getLangKey() == null) {
+            newUser.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
+        } else {
+            newUser.setLangKey(userDTO.getLangKey());
+        }
+        if (userDTO.getAddress() != null) {
+            newUser.setAddress(userDTO.getAddress().toAddress());
+        }
         // new user is not active
         newUser.setActivated(false);
         // new user gets registration key
@@ -150,10 +168,17 @@ public class UserService {
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
+        user.setLastName2(userDTO.getLastName2());
         if (userDTO.getEmail() != null) {
             user.setEmail(userDTO.getEmail().toLowerCase());
         }
+        if (userDTO.getGender() != null) user.setGender(GenderType.fromString(userDTO.getGender()));
+
+        user.setDescription(userDTO.getDescription());
         user.setImageUrl(userDTO.getImageUrl());
+        if (userDTO.getAddress() != null) {
+            user.setAddress(userDTO.getAddress().toAddress());
+        }
         if (userDTO.getLangKey() == null) {
             user.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
         } else {
@@ -193,24 +218,23 @@ public class UserService {
             .map(Optional::get)
             .map(user -> {
                 this.clearUserCaches(user);
-                user.setLogin(userDTO.getLogin().toLowerCase());
-                user.setFirstName(userDTO.getFirstName());
-                user.setLastName(userDTO.getLastName());
-                if (userDTO.getEmail() != null) {
-                    user.setEmail(userDTO.getEmail().toLowerCase());
+                if (userDTO.getLogin() != null) user.setLogin(userDTO.getLogin().toLowerCase());
+                if (userDTO.getFirstName() != null) user.setFirstName(userDTO.getFirstName());
+                if (userDTO.getLastName() != null) user.setLastName(userDTO.getLastName());
+                if (userDTO.getLastName2() != null) user.setLastName2(userDTO.getLastName2());
+                if (userDTO.getEmail() != null) user.setEmail(userDTO.getEmail().toLowerCase());
+                if (userDTO.getGender() != null) user.setGender(GenderType.fromString(userDTO.getGender()));
+                if (userDTO.getImageUrl() != null) user.setImageUrl(userDTO.getImageUrl());
+                if (userDTO.getAddress() != null) {
+                    if (user.getAddress() != null) {
+                        user.getAddress().setAddress(userDTO.getAddress().getAddress());
+                        user.getAddress().setCity(userDTO.getAddress().getCity());
+                        user.getAddress().setCountry(userDTO.getAddress().getCountry());
+                    } else user.setAddress(userDTO.getAddress().toAddress());
                 }
-                user.setImageUrl(userDTO.getImageUrl());
+                if (userDTO.getDescription() != null) user.setDescription(userDTO.getDescription());
                 user.setActivated(userDTO.isActivated());
-                user.setLangKey(userDTO.getLangKey());
-                Set<Authority> managedAuthorities = user.getAuthorities();
-                managedAuthorities.clear();
-                userDTO
-                    .getAuthorities()
-                    .stream()
-                    .map(authorityRepository::findById)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .forEach(managedAuthorities::add);
+                if (userDTO.getLangKey() != null) user.setLangKey(userDTO.getLangKey());
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
                 return user;
@@ -237,18 +261,38 @@ public class UserService {
      * @param langKey   language key.
      * @param imageUrl  image URL of user.
      */
-    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
+    public void updateUser(
+        String login,
+        String firstName,
+        String lastName,
+        String lastName2,
+        String email,
+        AddressDTO address,
+        String gender,
+        String langKey,
+        String imageUrl,
+        String description
+    ) {
         SecurityUtils
             .getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
             .ifPresent(user -> {
-                user.setFirstName(firstName);
-                user.setLastName(lastName);
-                if (email != null) {
-                    user.setEmail(email.toLowerCase());
+                if (login != null) user.setLogin(login);
+                if (firstName != null) user.setFirstName(firstName);
+                if (lastName != null) user.setLastName(lastName);
+                if (lastName2 != null) user.setLastName2(lastName2);
+                if (email != null) user.setEmail(email.toLowerCase());
+                if (address != null) {
+                    if (user.getAddress() != null) {
+                        user.getAddress().setAddress(address.getAddress());
+                        user.getAddress().setCity(address.getCity());
+                        user.getAddress().setCountry(address.getCountry());
+                    } else user.setAddress(address.toAddress());
                 }
-                user.setLangKey(langKey);
-                user.setImageUrl(imageUrl);
+                if (gender != null) user.setGender(GenderType.fromString(gender));
+                if (langKey != null) user.setLangKey(langKey);
+                if (imageUrl != null) user.setImageUrl(imageUrl);
+                if (description != null) user.setDescription(description);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
             });

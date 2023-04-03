@@ -1,6 +1,5 @@
 package com.mycompany.myapp.domain;
 
-import java.sql.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -19,7 +18,7 @@ public class User_Rating extends AbstractAuditingEntity<Long> {
 
     @NotNull
     @Column(name = "rating")
-    private int rating;
+    private Double rating;
 
     @ManyToOne
     @JoinColumn(name = "tapa_id", nullable = false)
@@ -37,11 +36,11 @@ public class User_Rating extends AbstractAuditingEntity<Long> {
         this.id = id;
     }
 
-    public int getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 
