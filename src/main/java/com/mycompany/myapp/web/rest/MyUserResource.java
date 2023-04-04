@@ -3,6 +3,7 @@ package com.mycompany.myapp.web.rest;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.service.MyUserService;
 import com.mycompany.myapp.service.UserService;
+import com.mycompany.myapp.service.dto.EstablishmentDTO;
 import com.mycompany.myapp.service.dto.TapaDTO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,5 +36,11 @@ public class MyUserResource {
     public ResponseEntity<List<TapaDTO>> getLastTapas(@PathVariable String login) {
         List<TapaDTO> tapaDTOList = myUserService.getLastTapas(login);
         return ResponseEntity.ok(tapaDTOList);
+    }
+
+    @GetMapping("/lastRestaurants/{login}")
+    public ResponseEntity<List<EstablishmentDTO>> getLastRestaurants(@PathVariable String login) {
+        List<EstablishmentDTO> restaurants = myUserService.getLastRestaurants(login);
+        return ResponseEntity.ok(restaurants);
     }
 }
