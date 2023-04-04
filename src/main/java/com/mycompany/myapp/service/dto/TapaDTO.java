@@ -46,6 +46,8 @@ public class TapaDTO implements Serializable {
 
     private Double average;
 
+    public TapaDTO() {}
+
     public TapaDTO(Tapa tapa) {
         this.id = tapa.getId();
         this.name = tapa.getName();
