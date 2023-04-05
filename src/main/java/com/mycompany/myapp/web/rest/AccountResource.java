@@ -108,9 +108,7 @@ public class AccountResource {
     public AdminUserDTO getAccount() {
         return userService
             .getUserWithAuthorities()
-            .map(user -> {
-                return new AdminUserDTO(user, addressService.findById(user.getAddress().getId()), null, null);
-            })
+            .map(user -> new AdminUserDTO(user, addressService.findById(user.getAddress().getId()), null, null))
             .orElseThrow(() -> new AccountResourceException("User could not be found"));
     }
 
