@@ -3,6 +3,7 @@ package com.mycompany.myapp.web.rest;
 import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.security.SecurityUtils;
+import com.mycompany.myapp.service.AddressService;
 import com.mycompany.myapp.service.MailService;
 import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.service.UsernameAlreadyUsedException;
@@ -44,10 +45,13 @@ public class AccountResource {
 
     private final MailService mailService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
+    private AddressService addressService;
+
+    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, AddressService addressService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
+        this.addressService = addressService;
     }
 
     /**
@@ -104,7 +108,9 @@ public class AccountResource {
     public AdminUserDTO getAccount() {
         return userService
             .getUserWithAuthorities()
-            .map(AdminUserDTO::new)
+            .map(user -> {
+                return new AdminUserDTO(user, addressService.findById(user.getAddress().getId()), null, null);
+            })
             .orElseThrow(() -> new AccountResourceException("User could not be found"));
     }
 
