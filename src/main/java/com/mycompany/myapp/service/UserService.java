@@ -294,7 +294,7 @@ public class UserService {
                 if (imageUrl != null) user.setImageUrl(imageUrl);
                 if (description != null) user.setDescription(description);
                 this.clearUserCaches(user);
-                log.debug("Changed Information for User: {}", user);
+                log.debug("Changed Information for User: {}", user + " " + user.getLastModifiedBy());
             });
     }
 
