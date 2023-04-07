@@ -2,7 +2,6 @@ package com.mycompany.myapp.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -18,17 +17,14 @@ public class Address extends AbstractAuditingEntity<Long> implements Serializabl
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @Size(max = 50)
     @Column(name = "country", length = 50)
     private String country;
 
-    @NotNull
     @Size(max = 50)
     @Column(name = "city", length = 50)
     private String city;
 
-    @NotNull
     @Column(name = "address", length = 50)
     private String address;
 

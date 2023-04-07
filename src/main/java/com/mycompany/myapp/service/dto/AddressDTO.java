@@ -39,6 +39,7 @@ public class AddressDTO implements Serializable {
 
     public AddressDTO(Address address) {
         this.id = address.getId();
+        this.address = address.getAddress();
         this.country = address.getCountry();
         this.city = address.getCity();
         this.createdBy = address.getCreatedBy();
