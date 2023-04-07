@@ -2,7 +2,6 @@ package com.mycompany.myapp.domain;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
@@ -33,6 +32,13 @@ public class Tapa extends AbstractAuditingEntity<Long> {
 
     @Column(name = "photo")
     private byte[] photo;
+
+    @Size(max = 256)
+    @Column(name = "image_url", length = 256)
+    private String imageUrl;
+
+    @Column(name = "my_created_by")
+    private Long myCreatedBy;
 
     @ManyToOne
     @JoinColumn(name = "establishment_id", nullable = false)
@@ -95,6 +101,22 @@ public class Tapa extends AbstractAuditingEntity<Long> {
 
     public void setEstablishment(Establishment establishment) {
         this.establishment = establishment;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public Long getMyCreatedBy() {
+        return myCreatedBy;
+    }
+
+    public void setMyCreatedBy(Long myCreatedBy) {
+        this.myCreatedBy = myCreatedBy;
     }
 
     @ManyToMany(mappedBy = "favourites")

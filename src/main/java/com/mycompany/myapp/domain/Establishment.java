@@ -28,6 +28,10 @@ public class Establishment extends AbstractAuditingEntity<Long> implements Seria
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
+    @NotNull
+    @Column(name = "my_created_by")
+    private Long myCreatedBy;
+
     @OneToMany(mappedBy = "establishment")
     private Set<Tapa> tapas;
 
@@ -48,6 +52,10 @@ public class Establishment extends AbstractAuditingEntity<Long> implements Seria
         return address;
     }
 
+    public Long getMyCreatedBy() {
+        return myCreatedBy;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -62,6 +70,10 @@ public class Establishment extends AbstractAuditingEntity<Long> implements Seria
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public void setMyCreatedBy(Long myCreatedBy) {
+        this.myCreatedBy = myCreatedBy;
     }
 
     public String toString() {
