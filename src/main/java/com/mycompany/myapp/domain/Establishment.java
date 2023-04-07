@@ -33,7 +33,7 @@ public class Establishment extends AbstractAuditingEntity<Long> implements Seria
 
     @Override
     public Long getId() {
-        return null;
+        return id;
     }
 
     public String getName() {
