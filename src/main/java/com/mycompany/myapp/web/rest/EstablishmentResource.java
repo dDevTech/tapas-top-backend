@@ -24,24 +24,24 @@ public class EstablishmentResource {
         this.establishmentService = establishmentService;
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     public List<Establishment> findAll(){
         return this.establishmentService.findAll();
     }
 
 
-    @GetMapping("/byId")
-    public Establishment findById(@RequestParam Long id){
+    @GetMapping("/{id}")
+    public Establishment findById(@PathVariable("id") Long id){
         return this.establishmentService.findById(id);
     }
 
-    @PostMapping("/save")
+    @PostMapping("")
     public Establishment save(@RequestBody Establishment Establishment){
         return this.establishmentService.save(Establishment);
     }
 
-    @DeleteMapping("/deleteById")
-    public void deleteById(@RequestParam Long id){
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable("id") Long id){
         this.establishmentService.deleteById(id);
     }
 }
