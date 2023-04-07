@@ -1,5 +1,7 @@
 package com.mycompany.myapp.domain;
 
+import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
+
 public enum EstablishmentType {
     BAR,
     RESTAURANTE;
@@ -12,6 +14,10 @@ public enum EstablishmentType {
                 }
             }
         }
-        throw new IllegalArgumentException("No establishment type constant with name " + establishmentString);
+        throw new BadRequestAlertException(
+            "No establishment type constant with name " + establishmentString,
+            "Invalid establishment type",
+            "Invalid establishment type"
+        );
     }
 }
