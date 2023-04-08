@@ -1,5 +1,6 @@
 package com.mycompany.myapp.service;
 
+import com.mycompany.myapp.domain.Establishment;
 import com.mycompany.myapp.domain.Tapa;
 import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.EstablishmentRepository;
@@ -41,6 +42,7 @@ public class MyUserService {
 
     @Autowired
     private User_RatingService user_ratingService;
+
 
     public List<TapaDTO> getFavourites(String login) {
         Optional<User> user = userRepository.findOneByLogin(login);
@@ -86,6 +88,29 @@ public class MyUserService {
             .collect(Collectors.toList());
         return res;
     }
+
+
+    public List<EstablishmentDTO> getAllRestaurants(String login) {
+        Optional<User> user = userRepository.findOneByLogin(login);
+
+        if (!user.isPresent()) {
+            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
+        }
+
+        List<Establishment> establishments = establishmentRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
+
+        List<EstablishmentDTO> res = establishments
+            .stream()
+            .map(establishment -> {
+                return new EstablishmentDTO(establishment, establishment.getAddress(), null);
+            })
+            .collect(Collectors.toList());
+
+        return res;
+    }
+
+
+
 
     public List<EstablishmentDTO> getLastRestaurants(String login) {
         Optional<User> user = userRepository.findOneByLogin(login);

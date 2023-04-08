@@ -8,6 +8,7 @@ import com.mycompany.myapp.service.dto.TapaDTO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,12 @@ public class MyUserResource {
     public ResponseEntity<List<TapaDTO>> getLastTapas(@PathVariable String login) {
         List<TapaDTO> tapaDTOList = myUserService.getLastTapas(login);
         return ResponseEntity.ok(tapaDTOList);
+    }
+
+    @GetMapping("/allRestaurants/{login}")
+    public ResponseEntity<List<EstablishmentDTO>> getAllRestaurants(@PathVariable String login) {
+        List<EstablishmentDTO> establishmentDTOList = myUserService.getAllRestaurants(login);
+        return ResponseEntity.ok(establishmentDTOList);
     }
 
     @GetMapping("/lastRestaurants/{login}")
