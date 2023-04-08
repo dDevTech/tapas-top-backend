@@ -28,40 +28,60 @@ public class Establishment extends AbstractAuditingEntity<Long> implements Seria
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
+    @NotNull
+    @Column(name = "my_created_by")
+    private Long myCreatedBy;
+
     @OneToMany(mappedBy = "establishment")
     private Set<Tapa> tapas;
 
     @Override
     public Long getId() {
-        return null;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public EstablishmentType getType() {
-        return type;
-    }
-
-    public Address getAddress() {
-        return address;
+        return id;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public EstablishmentType getType() {
+        return type;
     }
 
     public void setType(EstablishmentType type) {
         this.type = type;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public Long getMyCreatedBy() {
+        return myCreatedBy;
+    }
+
+    public void setMyCreatedBy(Long myCreatedBy) {
+        this.myCreatedBy = myCreatedBy;
+    }
+
+    public Set<Tapa> getTapas() {
+        return tapas;
+    }
+
+    public void setTapas(Set<Tapa> tapas) {
+        this.tapas = tapas;
     }
 
     public String toString() {

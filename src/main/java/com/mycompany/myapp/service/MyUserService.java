@@ -72,7 +72,7 @@ public class MyUserService {
 
         Instant today = Instant.now();
 
-        List<Tapa> tapas = tapaRepository.findAllByCreatedByOrderByCreatedDateDesc(user.get().getId().toString());
+        List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
 
         List<TapaDTO> res = tapas
             .stream()
@@ -97,11 +97,12 @@ public class MyUserService {
         Instant today = Instant.now();
 
         List<EstablishmentDTO> establishmentDTOList = establishmentRepository
-            .findAllByCreatedByOrderByCreatedDateDesc(user.get().getId().toString())
+            .findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId())
             .stream()
             .map(establishment -> {
                 return new EstablishmentDTO(establishment, establishment.getAddress(), null);
             })
+            .filter(tapaDTO -> tapaDTO.getCreatedDate().isAfter(Instant.from(today.minus(7, ChronoUnit.DAYS))))
             .collect(Collectors.toList());
 
         return establishmentDTOList;

@@ -48,6 +48,10 @@ public class TapaDTO implements Serializable {
 
     public TapaDTO() {}
 
+    private Long myCreatedBy;
+
+    private String imageUrl;
+
     public TapaDTO(Tapa tapa) {
         this.id = tapa.getId();
         this.name = tapa.getName();
@@ -59,6 +63,8 @@ public class TapaDTO implements Serializable {
         this.createdDate = tapa.getCreatedDate();
         this.lastModifiedBy = tapa.getLastModifiedBy();
         this.lastModifiedDate = tapa.getLastModifiedDate();
+        this.myCreatedBy = tapa.getMyCreatedBy();
+        this.imageUrl = tapa.getImageUrl();
     }
 
     public TapaDTO(Tapa tapa, Establishment establishment, Double average, User_Rating user_rating) {
@@ -178,6 +184,22 @@ public class TapaDTO implements Serializable {
 
     public void setAverage(Double average) {
         this.average = average;
+    }
+
+    public Long getMyCreatedBy() {
+        return myCreatedBy;
+    }
+
+    public void setMyCreatedBy(Long myCreatedBy) {
+        this.myCreatedBy = myCreatedBy;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
