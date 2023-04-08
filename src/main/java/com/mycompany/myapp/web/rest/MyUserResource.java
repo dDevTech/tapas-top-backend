@@ -34,7 +34,7 @@ public class MyUserResource {
     }
 
     @GetMapping("/allTapas/{login}")
-    public ResponseEntity<List<TapaDTO>> getAllRestaurants(@PathVariable String login) {
+    public ResponseEntity<List<TapaDTO>> getAllTapas(@PathVariable String login) {
         List<TapaDTO> establishmentDTOList = myUserService.getAllTapas(login);
         return ResponseEntity.ok(establishmentDTOList);
     }
