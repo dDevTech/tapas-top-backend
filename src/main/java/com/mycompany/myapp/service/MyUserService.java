@@ -63,6 +63,25 @@ public class MyUserService {
         return tapaDTOList;
     }
 
+    public List<TapaDTO> getAllTapas(String login) {
+        Optional<User> user = userRepository.findOneByLogin(login);
+
+        if (!user.isPresent()) {
+            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
+        }
+
+        List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
+
+        List<TapaDTO> res = tapas
+            .stream()
+            .map(tapa -> {
+                return new TapaDTO(tapa);
+            })
+            .collect(Collectors.toList());
+
+        return res;
+    }
+
     public List<TapaDTO> getLastTapas(String login) {
         Optional<User> user = userRepository.findOneByLogin(login);
 
