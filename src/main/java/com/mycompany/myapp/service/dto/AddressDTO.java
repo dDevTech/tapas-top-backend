@@ -39,6 +39,7 @@ public class AddressDTO implements Serializable {
 
     public AddressDTO(Address address) {
         this.id = address.getId();
+        this.address = address.getAddress();
         this.country = address.getCountry();
         this.city = address.getCity();
         this.createdBy = address.getCreatedBy();
@@ -51,6 +52,10 @@ public class AddressDTO implements Serializable {
         this(address);
         this.user = new AdminUserDTO(user);
         this.establishment = new EstablishmentDTO(establishment);
+    }
+
+    public AddressDTO() {
+        super();
     }
 
     public Long getId() {
@@ -144,6 +149,14 @@ public class AddressDTO implements Serializable {
             Objects.equals(city, that.city) &&
             Objects.equals(address, that.address)
         );
+    }
+
+    public Address toAddress() {
+        Address address = new Address();
+        address.setCountry(this.getCountry());
+        address.setCity(this.getCity());
+        address.setAddress(this.getAddress());
+        return address;
     }
 
     @Override

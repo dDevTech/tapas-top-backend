@@ -44,4 +44,10 @@ public class MyUserResource {
         List<EstablishmentDTO> establishmentDTOList = myUserService.getAllRestaurants(login);
         return ResponseEntity.ok(establishmentDTOList);
     }
+
+    @GetMapping("/lastRestaurants/{login}")
+    public ResponseEntity<List<EstablishmentDTO>> getLastRestaurants(@PathVariable String login) {
+        List<EstablishmentDTO> restaurants = myUserService.getLastRestaurants(login);
+        return ResponseEntity.ok(restaurants);
+    }
 }

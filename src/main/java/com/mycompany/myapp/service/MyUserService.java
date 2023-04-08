@@ -35,6 +35,9 @@ public class MyUserService {
     private TapaRepository tapaRepository;
 
     @Autowired
+    private EstablishmentRepository establishmentRepository;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -55,12 +58,10 @@ public class MyUserService {
             .orElse(Collections.emptySet())
             .stream()
             .map(tapa -> {
-                return new TapaDTO(
-                    tapa,
-                    tapa.getEstablishment(),
-                    user_ratingService.getTapaRatingAverage(tapa.getId()),
-                    user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId())
-                );
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
+                User_RatingDTO ratingDTO = new User_RatingDTO(user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId()));
+                tapaDTO.setRating(ratingDTO);
+                return tapaDTO;
             })
             .collect(Collectors.toList());
         return tapaDTOList;
@@ -75,7 +76,7 @@ public class MyUserService {
 
         Instant today = Instant.now();
 
-        List<Tapa> tapas = tapaRepository.findAllByCreatedByOrderByCreatedDateDesc(user.get().getId().toString());
+        List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
 
         List<TapaDTO> res = tapas
             .stream()
@@ -91,22 +92,46 @@ public class MyUserService {
     }
 
 
-    public List<EstablishmentDTO> getAllRestaurants(String login){
+    public List<EstablishmentDTO> getAllRestaurants(String login) {
         Optional<User> user = userRepository.findOneByLogin(login);
 
         if (!user.isPresent()) {
             throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
         }
-        List<Establishment> establishments = establishmentRepository.findAllByCreatedByOrderByCreatedDateDesc(user.get().getId().toString());
+
+        List<Establishment> establishments = establishmentRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
 
         List<EstablishmentDTO> res = establishments
             .stream()
             .map(establishment -> {
-                EstablishmentDTO establishmentDTO = new EstablishmentDTO(establishment);
-                return establishmentDTO;
+                return new EstablishmentDTO(establishment, establishment.getAddress(), null);
             })
             .collect(Collectors.toList());
 
         return res;
+    }
+
+
+
+
+    public List<EstablishmentDTO> getLastRestaurants(String login) {
+        Optional<User> user = userRepository.findOneByLogin(login);
+
+        if (!user.isPresent()) {
+            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
+        }
+
+        Instant today = Instant.now();
+
+        List<EstablishmentDTO> establishmentDTOList = establishmentRepository
+            .findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId())
+            .stream()
+            .map(establishment -> {
+                return new EstablishmentDTO(establishment, establishment.getAddress(), null);
+            })
+            .filter(tapaDTO -> tapaDTO.getCreatedDate().isAfter(Instant.from(today.minus(7, ChronoUnit.DAYS))))
+            .collect(Collectors.toList());
+
+        return establishmentDTOList;
     }
 }

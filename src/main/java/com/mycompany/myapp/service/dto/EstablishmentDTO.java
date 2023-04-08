@@ -3,7 +3,6 @@ package com.mycompany.myapp.service.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mycompany.myapp.domain.Address;
 import com.mycompany.myapp.domain.Establishment;
-import com.mycompany.myapp.domain.Establishment_;
 import com.mycompany.myapp.domain.Tapa;
 import java.io.Serializable;
 import java.time.Instant;
@@ -34,6 +33,8 @@ public class EstablishmentDTO implements Serializable {
 
     private Instant lastModifiedDate;
 
+    private Long myCreatedBy;
+
     public EstablishmentDTO(Establishment establishment) {
         this.id = establishment.getId();
         this.name = establishment.getName();
@@ -42,6 +43,7 @@ public class EstablishmentDTO implements Serializable {
         this.createdDate = establishment.getCreatedDate();
         this.lastModifiedBy = establishment.getLastModifiedBy();
         this.lastModifiedDate = establishment.getLastModifiedDate();
+        this.myCreatedBy = establishment.getMyCreatedBy();
     }
 
     public EstablishmentDTO(Establishment establishment, Address address, Set<Tapa> tapas) {
@@ -120,6 +122,14 @@ public class EstablishmentDTO implements Serializable {
 
     public void setLastModifiedDate(Instant lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Long getMyCreatedBy() {
+        return myCreatedBy;
+    }
+
+    public void setMyCreatedBy(Long myCreatedBy) {
+        this.myCreatedBy = myCreatedBy;
     }
 
     @Override

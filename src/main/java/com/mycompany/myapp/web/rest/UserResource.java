@@ -12,8 +12,10 @@ import com.mycompany.myapp.web.rest.errors.EmailAlreadyUsedException;
 import com.mycompany.myapp.web.rest.errors.LoginAlreadyUsedException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import org.slf4j.Logger;
@@ -64,9 +66,15 @@ public class UserResource {
         Arrays.asList(
             "id",
             "login",
+            "user_name",
             "firstName",
             "lastName",
+            "lastName2",
             "email",
+            "photo",
+            "address",
+            "gender",
+            "description",
             "activated",
             "langKey",
             "createdBy",

@@ -3,14 +3,18 @@ package com.mycompany.myapp.web.rest;
 import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.security.SecurityUtils;
+import com.mycompany.myapp.service.AddressService;
 import com.mycompany.myapp.service.MailService;
 import com.mycompany.myapp.service.UserService;
+import com.mycompany.myapp.service.UsernameAlreadyUsedException;
 import com.mycompany.myapp.service.dto.AdminUserDTO;
 import com.mycompany.myapp.service.dto.PasswordChangeDTO;
-import com.mycompany.myapp.web.rest.errors.*;
+import com.mycompany.myapp.web.rest.errors.EmailAlreadyUsedException;
+import com.mycompany.myapp.web.rest.errors.InvalidPasswordException;
+import com.mycompany.myapp.web.rest.errors.LoginAlreadyUsedException;
 import com.mycompany.myapp.web.rest.vm.KeyAndPasswordVM;
 import com.mycompany.myapp.web.rest.vm.ManagedUserVM;
-import java.util.*;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
@@ -41,10 +45,13 @@ public class AccountResource {
 
     private final MailService mailService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService) {
+    private AddressService addressService;
+
+    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, AddressService addressService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
+        this.addressService = addressService;
     }
 
     /**
@@ -101,7 +108,9 @@ public class AccountResource {
     public AdminUserDTO getAccount() {
         return userService
             .getUserWithAuthorities()
-            .map(AdminUserDTO::new)
+            .map(user ->
+                new AdminUserDTO(user, user.getAddress() != null ? addressService.findById(user.getAddress().getId()) : null, null, null)
+            )
             .orElseThrow(() -> new AccountResourceException("User could not be found"));
     }
 
@@ -121,16 +130,28 @@ public class AccountResource {
         if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))) {
             throw new EmailAlreadyUsedException();
         }
+
         Optional<User> user = userRepository.findOneByLogin(userLogin);
         if (!user.isPresent()) {
             throw new AccountResourceException("User could not be found");
         }
+        if (userDTO.getLogin() != null && !userDTO.getLogin().equals(userLogin)) {
+            Optional<User> userWithSameLogin = userRepository.findOneByLogin(userDTO.getLogin());
+            if (userWithSameLogin.isPresent()) {
+                throw new UsernameAlreadyUsedException();
+            }
+        }
         userService.updateUser(
+            userDTO.getLogin(),
             userDTO.getFirstName(),
             userDTO.getLastName(),
+            userDTO.getLastName2(),
             userDTO.getEmail(),
+            userDTO.getAddress(),
+            userDTO.getGender(),
             userDTO.getLangKey(),
-            userDTO.getImageUrl()
+            userDTO.getImageUrl(),
+            userDTO.getDescription()
         );
     }
 
