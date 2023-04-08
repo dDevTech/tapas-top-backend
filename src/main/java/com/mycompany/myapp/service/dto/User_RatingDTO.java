@@ -32,6 +32,8 @@ public class User_RatingDTO implements Serializable {
 
     private Instant lastModifiedDate;
 
+    public User_RatingDTO() {}
+
     public User_RatingDTO(User_Rating userRating) {
         this.id = userRating.getId();
         this.rating = userRating.getRating();
@@ -148,5 +150,16 @@ public class User_RatingDTO implements Serializable {
             lastModifiedDate +
             '}'
         );
+    }
+
+    public User_Rating toEntity() {
+        User_Rating userRating = new User_Rating();
+        userRating.setId(this.id);
+        userRating.setRating(this.rating);
+        userRating.setCreatedBy(this.createdBy);
+        userRating.setCreatedDate(this.createdDate);
+        userRating.setLastModifiedBy(this.lastModifiedBy);
+        userRating.setLastModifiedDate(this.lastModifiedDate);
+        return userRating;
     }
 }
