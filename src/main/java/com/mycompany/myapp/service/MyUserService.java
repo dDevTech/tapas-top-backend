@@ -43,7 +43,6 @@ public class MyUserService {
     @Autowired
     private User_RatingService user_ratingService;
 
-
     public List<TapaDTO> getFavourites(String login) {
         Optional<User> user = userRepository.findOneByLogin(login);
 
@@ -77,7 +76,10 @@ public class MyUserService {
         List<TapaDTO> res = tapas
             .stream()
             .map(tapa -> {
-                return new TapaDTO(tapa);
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
+                User_RatingDTO ratingDTO = new User_RatingDTO(user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId()));
+                tapaDTO.setRating(ratingDTO);
+                return tapaDTO;
             })
             .collect(Collectors.toList());
 
@@ -108,7 +110,6 @@ public class MyUserService {
         return res;
     }
 
-
     public List<EstablishmentDTO> getAllRestaurants(String login) {
         Optional<User> user = userRepository.findOneByLogin(login);
 
@@ -127,9 +128,6 @@ public class MyUserService {
 
         return res;
     }
-
-
-
 
     public List<EstablishmentDTO> getLastRestaurants(String login) {
         Optional<User> user = userRepository.findOneByLogin(login);
