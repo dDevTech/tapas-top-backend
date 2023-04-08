@@ -45,9 +45,6 @@ public class EstablishmentDTO implements Serializable {
         this.lastModifiedBy = establishment.getLastModifiedBy();
         this.lastModifiedDate = establishment.getLastModifiedDate();
         this.myCreatedBy = establishment.getMyCreatedBy();
-        this.address = new AddressDTO(establishment.getAddress());
-        Set<Tapa> tapas = establishment.getTapas();
-        this.tapas =tapas != null ? tapas.stream().map(TapaDTO::new).collect(Collectors.toSet()) : null;
     }
 
     public EstablishmentDTO(Establishment establishment, Address address, Set<Tapa> tapas) {
@@ -56,9 +53,9 @@ public class EstablishmentDTO implements Serializable {
         this.tapas = tapas != null ? tapas.stream().map(TapaDTO::new).collect(Collectors.toSet()) : null;
     }
 
-    public EstablishmentDTO(){}
+    public EstablishmentDTO() {}
 
-    public Establishment toEstablishment(){
+    public Establishment toEstablishment() {
         Establishment res = new Establishment();
         res.setId(id);
         res.setName(this.name);

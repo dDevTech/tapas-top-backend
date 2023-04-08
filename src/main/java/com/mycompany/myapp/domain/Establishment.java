@@ -40,36 +40,36 @@ public class Establishment extends AbstractAuditingEntity<Long> implements Seria
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public EstablishmentType getType() {
-        return type;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public Long getMyCreatedBy() {
-        return myCreatedBy;
-    }
-
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public EstablishmentType getType() {
+        return type;
+    }
+
     public void setType(EstablishmentType type) {
         this.type = type;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public Long getMyCreatedBy() {
+        return myCreatedBy;
     }
 
     public void setMyCreatedBy(Long myCreatedBy) {
@@ -78,6 +78,10 @@ public class Establishment extends AbstractAuditingEntity<Long> implements Seria
 
     public Set<Tapa> getTapas() {
         return tapas;
+    }
+
+    public void setTapas(Set<Tapa> tapas) {
+        this.tapas = tapas;
     }
 
     public String toString() {
