@@ -76,6 +76,10 @@ public class Establishment extends AbstractAuditingEntity<Long> implements Seria
         this.myCreatedBy = myCreatedBy;
     }
 
+    public Set<Tapa> getTapas() {
+        return tapas;
+    }
+
     public String toString() {
         return "Establishment{" + "name='" + name + '\'' + ", type='" + type + '\'' + ", address='" + address + '\'' + "}";
     }

@@ -3,6 +3,7 @@ package com.mycompany.myapp.service.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mycompany.myapp.domain.Address;
 import com.mycompany.myapp.domain.Establishment;
+import com.mycompany.myapp.domain.EstablishmentType;
 import com.mycompany.myapp.domain.Tapa;
 import java.io.Serializable;
 import java.time.Instant;
@@ -44,12 +45,31 @@ public class EstablishmentDTO implements Serializable {
         this.lastModifiedBy = establishment.getLastModifiedBy();
         this.lastModifiedDate = establishment.getLastModifiedDate();
         this.myCreatedBy = establishment.getMyCreatedBy();
+        this.address = new AddressDTO(establishment.getAddress());
+        Set<Tapa> tapas = establishment.getTapas();
+        this.tapas =tapas != null ? tapas.stream().map(TapaDTO::new).collect(Collectors.toSet()) : null;
     }
 
     public EstablishmentDTO(Establishment establishment, Address address, Set<Tapa> tapas) {
         this(establishment);
         this.address = address != null ? new AddressDTO(address) : null;
         this.tapas = tapas != null ? tapas.stream().map(TapaDTO::new).collect(Collectors.toSet()) : null;
+    }
+
+    public EstablishmentDTO(){}
+
+    public Establishment toEstablishment(){
+        Establishment res = new Establishment();
+        res.setId(id);
+        res.setName(this.name);
+        res.setType(EstablishmentType.fromString(this.type));
+        res.setCreatedBy(this.createdBy);
+        res.setCreatedDate(this.createdDate);
+        res.setLastModifiedBy(this.lastModifiedBy);
+        res.setLastModifiedDate(this.lastModifiedDate);
+        res.setMyCreatedBy(this.myCreatedBy);
+        res.setAddress(this.address.toAddress());
+        return res;
     }
 
     public Long getId() {
