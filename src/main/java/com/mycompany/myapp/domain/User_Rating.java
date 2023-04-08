@@ -70,9 +70,4 @@ public class User_Rating extends AbstractAuditingEntity<Long> {
         }
         return id != null && id.equals(((User_Rating) o).id);
     }
-
-    @Override
-    public String toString() {
-        return ("UserRating{" + "rating='" + rating + '\'' + ", tapa='" + tapa.toString() + '\'' + ", user='" + user.toString() + "}");
-    }
 }
