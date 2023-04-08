@@ -46,6 +46,8 @@ public class TapaDTO implements Serializable {
 
     private Double average;
 
+    public TapaDTO() {}
+
     private Long myCreatedBy;
 
     private String imageUrl;
