@@ -1,12 +1,11 @@
-package com.mycompany.myapp.service.dto;
+package com.mycompany.myapp.web.rest.requests;
 
-import com.mycompany.myapp.domain.Establishment;
 import com.mycompany.myapp.domain.Tapa;
-
-import javax.validation.constraints.Size;
 import java.util.Arrays;
+import javax.validation.constraints.Size;
 
-public class TapaCreationDTO {
+public class TapaRequest {
+
     @Size(max = 50)
     private String name;
 
@@ -78,15 +77,30 @@ public class TapaCreationDTO {
 
     @Override
     public String toString() {
-        return "TapaCreationDTO{" +
-            "name='" + name + '\'' +
-            ", description='" + description + '\'' +
-            ", type='" + type + '\'' +
-            ", country='" + country + '\'' +
-            ", photo=" + Arrays.toString(photo) +
-            ", imageUrl='" + imageUrl + '\'' +
-            ", myCreatedBy=" + myCreatedBy +
-            ", establishment=" + establishment +
-            '}';
+        return (
+            "TapaCreationDTO{" +
+            "name='" +
+            name +
+            '\'' +
+            ", description='" +
+            description +
+            '\'' +
+            ", type='" +
+            type +
+            '\'' +
+            ", country='" +
+            country +
+            '\'' +
+            ", photo=" +
+            Arrays.toString(photo) +
+            ", imageUrl='" +
+            imageUrl +
+            '\'' +
+            ", myCreatedBy=" +
+            myCreatedBy +
+            ", establishment=" +
+            establishment +
+            '}'
+        );
     }
 }

@@ -7,15 +7,17 @@ import com.mycompany.myapp.repository.EstablishmentRepository;
 import com.mycompany.myapp.repository.TapaRepository;
 import com.mycompany.myapp.service.TapaService;
 import com.mycompany.myapp.service.UserService;
-import com.mycompany.myapp.service.dto.TapaCreationDTO;
+import com.mycompany.myapp.service.User_RatingService;
 import com.mycompany.myapp.service.dto.TapaDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.*;
-
+import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
+import com.mycompany.myapp.web.rest.requests.TapaRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/tapa")
@@ -23,52 +25,55 @@ public class TapaResource {
 
     private final Logger log = LoggerFactory.getLogger(TapaResource.class);
 
-    private final TapaService tapaService;
+    @Autowired
+    private TapaService tapaService;
 
-    private final TapaRepository tapaRepository;
-    private final EstablishmentRepository establishmentRepository;
+    @Autowired
+    private TapaRepository tapaRepository;
 
-    private final UserService userService;
+    @Autowired
+    private EstablishmentRepository establishmentRepository;
 
-    public TapaResource(TapaRepository tapaRepository, TapaService tapaService, EstablishmentRepository establishmentRepository, UserService userService) {
-        this.tapaRepository = tapaRepository;
-        this.tapaService = tapaService;
-        this.establishmentRepository = establishmentRepository;
-        this.userService = userService;
-    }
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private User_RatingService user_ratingService;
 
     @GetMapping("")
-    public List<TapaDTO> findAll(){
+    public List<TapaDTO> findAll() {
         List<Tapa> tapaList = this.tapaService.findAll();
         List<TapaDTO> dtos = new ArrayList<>();
-        for(Tapa tapa : tapaList){
-            dtos.add(new TapaDTO(tapa));
+        for (Tapa tapa : tapaList) {
+            dtos.add(new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null));
         }
         return dtos;
     }
 
-
     @GetMapping("/{id}")
-    public TapaDTO findById(@PathVariable("id") Long id){
+    public TapaDTO findById(@PathVariable("id") Long id) {
         Tapa tapa = this.tapaService.findById(id);
-        if (tapa == null)
-            return null;
+        if (tapa == null) return null;
         return new TapaDTO(tapa);
     }
 
     @PostMapping("")
-    public TapaDTO save(@RequestBody TapaCreationDTO dto){
-        Establishment establishment;
+    public TapaDTO save(@RequestBody TapaRequest dto) {
         System.out.println(dto.toString());
-        if((establishment = this.establishmentRepository.findById(dto.getEstablishment()).get()) == null){
-            return null;
-        }
-        Optional<User> isUser = userService.getUserWithAuthorities();
-        if(!isUser.isPresent()){
-            return null;
-        }
-        User user = isUser.get();
-        establishment.setMyCreatedBy(user.getId());
+        Establishment establishment =
+            this.establishmentRepository.findById(dto.getEstablishment())
+                .orElseThrow(() ->
+                    new BadRequestAlertException(
+                        "Could not found Establishment with id: " + dto.getEstablishment(),
+                        "Invalid id",
+                        "Invalid id"
+                    )
+                );
+
+        User user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new BadRequestAlertException("Could not found users login", "Login not found", "Login not found"));
+
         Tapa tapa = dto.toTapa();
         tapa.setEstablishment(establishment);
         tapa.setMyCreatedBy(user.getId());
@@ -76,7 +81,7 @@ public class TapaResource {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable("id") Long id){
+    public void deleteById(@PathVariable("id") Long id) {
         this.tapaService.deleteById(id);
     }
 }
