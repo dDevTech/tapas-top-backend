@@ -43,8 +43,6 @@ public class MyUserService {
     @Autowired
     private User_RatingService user_ratingService;
 
-    @Autowired
-    private EstablishmentRepository establishmentRepository;
 
     public List<TapaDTO> getFavourites(String login) {
         Optional<User> user = userRepository.findOneByLogin(login);
