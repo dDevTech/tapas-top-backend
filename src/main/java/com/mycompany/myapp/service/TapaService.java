@@ -2,6 +2,7 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.Tapa;
 import com.mycompany.myapp.repository.TapaRepository;
+import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.util.List;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
@@ -23,7 +24,9 @@ public class TapaService {
     }
 
     public Tapa findById(Long id) {
-        return tapaRepository.findById(id).orElse(null);
+        return tapaRepository
+            .findById(id)
+            .orElseThrow(() -> new BadRequestAlertException("Could not found Tapa with id: " + id, "Invalid id", "Invalid id"));
     }
 
     public Tapa save(Tapa tapa) {
