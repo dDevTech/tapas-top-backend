@@ -3,6 +3,7 @@ package com.mycompany.myapp.service;
 import com.mycompany.myapp.domain.Establishment;
 import com.mycompany.myapp.domain.Tapa;
 import com.mycompany.myapp.domain.User;
+import com.mycompany.myapp.domain.User_Rating;
 import com.mycompany.myapp.repository.EstablishmentRepository;
 import com.mycompany.myapp.repository.TapaRepository;
 import com.mycompany.myapp.repository.UserRepository;
@@ -77,8 +78,11 @@ public class MyUserService {
             .stream()
             .map(tapa -> {
                 TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
-                User_RatingDTO ratingDTO = new User_RatingDTO(user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId()));
-                tapaDTO.setRating(ratingDTO);
+                User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
+                if (rating != null) {
+                    User_RatingDTO ratingDTO = new User_RatingDTO();
+                    tapaDTO.setRating(ratingDTO);
+                }
                 return tapaDTO;
             })
             .collect(Collectors.toList());
@@ -101,8 +105,11 @@ public class MyUserService {
             .stream()
             .map(tapa -> {
                 TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
-                User_RatingDTO ratingDTO = new User_RatingDTO(user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId()));
-                tapaDTO.setRating(ratingDTO);
+                User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
+                if (rating != null) {
+                    User_RatingDTO ratingDTO = new User_RatingDTO();
+                    tapaDTO.setRating(ratingDTO);
+                }
                 return tapaDTO;
             })
             .filter(tapaDTO -> tapaDTO.getCreatedDate().isAfter(Instant.from(today.minus(7, ChronoUnit.DAYS))))

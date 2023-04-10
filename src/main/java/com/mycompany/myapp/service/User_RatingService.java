@@ -76,6 +76,8 @@ public class User_RatingService {
     }
 
     public User_Rating findByTapaIdAndUserId(Long id_tapa, Long id_usuario) {
-        return userRatingRepository.findAllByUserIdAndTapaId(id_usuario, id_tapa).get(0);
+        List<User_Rating> ratings = userRatingRepository.findAllByUserIdAndTapaId(id_usuario, id_tapa);
+        if (ratings.isEmpty()) return null;
+        return ratings.get(0);
     }
 }
