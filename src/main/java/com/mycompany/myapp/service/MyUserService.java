@@ -57,8 +57,11 @@ public class MyUserService {
             .stream()
             .map(tapa -> {
                 TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
-                User_RatingDTO ratingDTO = new User_RatingDTO(user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId()));
-                tapaDTO.setRating(ratingDTO);
+                User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
+                if (rating != null) {
+                    User_RatingDTO ratingDTO = new User_RatingDTO(rating);
+                    tapaDTO.setRating(ratingDTO);
+                }
                 return tapaDTO;
             })
             .collect(Collectors.toList());
@@ -80,7 +83,7 @@ public class MyUserService {
                 TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
                 User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
                 if (rating != null) {
-                    User_RatingDTO ratingDTO = new User_RatingDTO();
+                    User_RatingDTO ratingDTO = new User_RatingDTO(rating);
                     tapaDTO.setRating(ratingDTO);
                 }
                 return tapaDTO;
@@ -107,7 +110,7 @@ public class MyUserService {
                 TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
                 User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
                 if (rating != null) {
-                    User_RatingDTO ratingDTO = new User_RatingDTO();
+                    User_RatingDTO ratingDTO = new User_RatingDTO(rating);
                     tapaDTO.setRating(ratingDTO);
                 }
                 return tapaDTO;
