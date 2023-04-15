@@ -14,6 +14,7 @@ import com.mycompany.myapp.web.rest.requests.TapaRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,5 +84,14 @@ public class TapaResource {
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable("id") Long id) {
         this.tapaService.deleteById(id);
+    }
+
+    @GetMapping("/name/{name}")
+    public List<TapaDTO> tapaById(@PathVariable String name) {
+        return tapaService
+            .findByName(name)
+            .stream()
+            .map(tapa -> new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null))
+            .collect(Collectors.toList());
     }
 }
