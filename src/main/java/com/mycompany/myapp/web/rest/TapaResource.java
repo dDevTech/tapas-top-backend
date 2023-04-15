@@ -8,6 +8,7 @@ import com.mycompany.myapp.repository.TapaRepository;
 import com.mycompany.myapp.service.TapaService;
 import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.service.User_RatingService;
+import com.mycompany.myapp.service.dto.EstablishmentDTO;
 import com.mycompany.myapp.service.dto.TapaDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import com.mycompany.myapp.web.rest.requests.TapaRequest;
@@ -91,7 +92,16 @@ public class TapaResource {
         return tapaService
             .findByName(name)
             .stream()
-            .map(tapa -> new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null))
+            .map(tapa -> {
+                TapaDTO dto = new TapaDTO(tapa, null, user_ratingService.getTapaRatingAverage(tapa.getId()), null);
+                EstablishmentDTO establishmentDTO = new EstablishmentDTO(
+                    tapa.getEstablishment(),
+                    tapa.getEstablishment().getAddress(),
+                    null
+                );
+                dto.setEstablishment(establishmentDTO);
+                return dto;
+            })
             .collect(Collectors.toList());
     }
 }
