@@ -2,6 +2,7 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.Tapa;
 import com.mycompany.myapp.repository.TapaRepository;
+import com.mycompany.myapp.service.dto.TapaDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -35,5 +36,9 @@ public class TapaService {
 
     public void deleteById(Long id) {
         tapaRepository.deleteById(id);
+    }
+
+    public List<Tapa> findByName(String name) {
+        return tapaRepository.findAllByNameLike("%" + name + "%");
     }
 }
