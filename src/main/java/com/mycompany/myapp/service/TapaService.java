@@ -2,9 +2,10 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.Tapa;
 import com.mycompany.myapp.repository.TapaRepository;
-import com.mycompany.myapp.service.dto.TapaDTO;
+import com.mycompany.myapp.service.filters.TapaFilter;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.util.List;
+import java.util.Map;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +21,8 @@ public class TapaService {
     @Autowired
     private TapaRepository tapaRepository;
 
-    public List<Tapa> findAll() {
-        return tapaRepository.findAll();
+    public List<Tapa> findAll(Map<String, String> filters) {
+        return TapaFilter.filterTapas(tapaRepository.findAll(), filters);
     }
 
     public Tapa findById(Long id) {
@@ -38,7 +39,7 @@ public class TapaService {
         tapaRepository.deleteById(id);
     }
 
-    public List<Tapa> findByName(String name) {
-        return tapaRepository.findAllByNameLike("%" + name + "%");
+    public List<Tapa> findByName(String name, Map<String, String> filters) {
+        return TapaFilter.filterTapas(tapaRepository.findAllByNameLike("%" + name + "%"), filters);
     }
 }

@@ -18,6 +18,7 @@ import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import com.mycompany.myapp.web.rest.requests.TapaRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -50,8 +51,8 @@ public class TapaResource {
     private UserRepository userRepository;
 
     @GetMapping("")
-    public List<TapaDTO> findAll() {
-        List<Tapa> tapaList = this.tapaService.findAll();
+    public List<TapaDTO> findAll(@RequestParam Map<String, String> params) {
+        List<Tapa> tapaList = this.tapaService.findAll(params);
         List<TapaDTO> dtos = new ArrayList<>();
         for (Tapa tapa : tapaList) {
             dtos.add(new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null));
@@ -95,13 +96,13 @@ public class TapaResource {
     }
 
     @GetMapping("/name/{name}")
-    public List<TapaDTO> tapaByName(@PathVariable String name) {
+    public List<TapaDTO> tapaByName(@PathVariable String name, @RequestParam Map<String, String> params) {
         User user = SecurityUtils
             .getCurrentUserLogin()
             .flatMap(userRepository::findOneWithAuthoritiesByLogin)
             .orElseThrow(() -> new BadRequestAlertException("Could not found user with login", "Invalid login", "Invalid login"));
         return tapaService
-            .findByName(name)
+            .findByName(name, params)
             .stream()
             .map(tapa -> {
                 TapaDTO dto = new TapaDTO(tapa, null, user_ratingService.getTapaRatingAverage(tapa.getId()), null);
