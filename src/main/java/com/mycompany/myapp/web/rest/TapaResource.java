@@ -51,7 +51,13 @@ public class TapaResource {
     private UserRepository userRepository;
 
     @GetMapping("")
-    public List<TapaDTO> findAll(@RequestParam Map<String, String> params) {
+    public List<TapaDTO> findAll(
+        @RequestParam(name = "city", required = false) String city,
+        @RequestParam(name = "precedence", required = false) String precedence,
+        @RequestParam(name = "type", required = false) String type,
+        @RequestParam(name = "country", required = false) String country
+    ) {
+        Map<String, String> params = Map.of("city", city, "precedence", precedence, "type", type, "country", country);
         List<Tapa> tapaList = this.tapaService.findAll(params);
         List<TapaDTO> dtos = new ArrayList<>();
         for (Tapa tapa : tapaList) {
@@ -96,11 +102,20 @@ public class TapaResource {
     }
 
     @GetMapping("/name/{name}")
-    public List<TapaDTO> tapaByName(@PathVariable String name, @RequestParam Map<String, String> params) {
+    public List<TapaDTO> tapaByName(
+        @PathVariable String name,
+        @RequestParam(name = "city", required = false) String city,
+        @RequestParam(name = "precedence", required = false) String precedence,
+        @RequestParam(name = "type", required = false) String type,
+        @RequestParam(name = "country", required = false) String country
+    ) {
         User user = SecurityUtils
             .getCurrentUserLogin()
             .flatMap(userRepository::findOneWithAuthoritiesByLogin)
             .orElseThrow(() -> new BadRequestAlertException("Could not found user with login", "Invalid login", "Invalid login"));
+
+        Map<String, String> params = Map.of("city", city, "precedence", precedence, "type", type, "country", country);
+
         return tapaService
             .findByName(name, params)
             .stream()
