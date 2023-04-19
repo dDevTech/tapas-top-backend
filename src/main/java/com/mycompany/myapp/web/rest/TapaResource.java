@@ -16,9 +16,7 @@ import com.mycompany.myapp.service.dto.TapaDTO;
 import com.mycompany.myapp.service.dto.User_RatingDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import com.mycompany.myapp.web.rest.requests.TapaRequest;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +49,14 @@ public class TapaResource {
 
     @GetMapping("")
     public List<TapaDTO> findAll() {
-        List<Tapa> tapaList = this.tapaService.findAll();
+        List<TapaDTO> dtos = this.tapaService.findAll();
+        /*
         List<TapaDTO> dtos = new ArrayList<>();
         for (Tapa tapa : tapaList) {
             dtos.add(new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null));
         }
+        */
+
         return dtos;
     }
 
