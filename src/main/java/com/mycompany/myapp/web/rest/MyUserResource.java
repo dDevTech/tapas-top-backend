@@ -56,4 +56,48 @@ public class MyUserResource {
         List<EstablishmentDTO> restaurants = myUserService.getLastRestaurants(login);
         return ResponseEntity.ok(restaurants);
     }
+    @PostMapping("/favourites/{tapaId}")
+    public ResponseEntity<List<TapaDTO>> addTapaToFavourites(@PathVariable Long tapaId, @AuthenticationPrincipal(expression = "user") User currentUser) {
+        Optional<Tapa> tapa = myUserService.getTapaById(tapaId);
+        if (!tapa.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tapa not found");
+        }
+
+        Optional<User> user = userRepository.findById(currentUser.getId());
+        if (!user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
+        }
+
+        Set<Tapa> favourites = user.get().getFavourites();
+        favourites.add(tapa.get());
+        user.get().setFavourites(favourites);
+        userRepository.save(user.get());
+
+        List<TapaDTO> tapaDTOList = myUserService.getFavourites(currentUser.getLogin());
+        return ResponseEntity.ok(tapaDTOList);
+    }
+
+    public ResponseEntity<List<TapaDTO>> removeTapaFromFavourites(@PathVariable Long tapaId, @AuthenticationPrincipal(expression = "user") User currentUser) {
+        Optional<Tapa> tapa = myUserService.getTapaById(tapaId);
+        if (!tapa.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tapa not found");
+        }
+
+        Optional<User> user = userRepository.findById(currentUser.getId());
+        if (!user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
+        }
+
+        Set<Tapa> favourites = user.get().getFavourites();
+        if (!favourites.contains(tapa.get())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tapa not in favourites");
+        }
+
+        favourites.remove(tapa.get());
+        user.get().setFavourites(favourites);
+        userRepository.save(user.get());
+
+        List<TapaDTO> tapaDTOList = myUserService.getFavourites(currentUser.getLogin());
+        return ResponseEntity.ok(tapaDTOList);
+    }
 }
