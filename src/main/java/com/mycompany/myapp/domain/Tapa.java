@@ -3,6 +3,8 @@ package com.mycompany.myapp.domain;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -46,6 +48,26 @@ public class Tapa extends AbstractAuditingEntity<Long> {
 
     @OneToMany(mappedBy = "tapa")
     private Set<User_Rating> ratings;
+
+    @Max(5)
+    @Min(0)
+    @Column(name = "dulce")
+    private Integer dulce;
+
+    @Max(5)
+    @Min(0)
+    @Column(name = "amargo")
+    private Integer amargo;
+
+    @Max(5)
+    @Min(0)
+    @Column(name = "acido")
+    private Integer acido;
+
+    @Max(5)
+    @Min(0)
+    @Column(name = "salado")
+    private Integer salado;
 
     public Long getId() {
         return id;
@@ -118,6 +140,22 @@ public class Tapa extends AbstractAuditingEntity<Long> {
     public void setMyCreatedBy(Long myCreatedBy) {
         this.myCreatedBy = myCreatedBy;
     }
+
+    public Integer getAcido() { return acido; }
+
+    public Integer getAmargo() { return amargo; }
+
+    public Integer getDulce() { return dulce; }
+
+    public Integer getSalado() { return salado; }
+
+    public void setSalado(Integer salado) { this.salado = salado; }
+
+    public void setDulce(Integer dulce) { this.dulce = dulce; }
+
+    public void setAmargo(Integer amargo) { this.amargo = amargo; }
+
+    public void setAcido(Integer acido) { this.acido = acido; }
 
     @ManyToMany(mappedBy = "favourites")
     private Set<User> fans = new HashSet<>();

@@ -112,7 +112,10 @@ public class TapaResource {
             .getCurrentUserLogin()
             .flatMap(userRepository::findOneWithAuthoritiesByLogin)
             .orElseThrow(() -> new BadRequestAlertException("Could not found user with login", "Invalid login", "Invalid login"));
-
+        if (city == null) city = "";
+        if (precedence == null) precedence = "";
+        if (type == null) type = "";
+        if (country == null) country = "";
         Map<String, String> params = Map.of("city", city, "precedence", precedence, "type", type, "country", country);
 
         return tapaService

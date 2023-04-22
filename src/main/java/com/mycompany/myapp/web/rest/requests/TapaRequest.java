@@ -2,6 +2,8 @@ package com.mycompany.myapp.web.rest.requests;
 
 import com.mycompany.myapp.domain.Tapa;
 import java.util.Arrays;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 public class TapaRequest {
@@ -27,6 +29,22 @@ public class TapaRequest {
 
     private Long establishment;
 
+    @Max(5)
+    @Min(0)
+    private Integer dulce;
+
+    @Max(5)
+    @Min(0)
+    private Integer amargo;
+
+    @Max(5)
+    @Min(0)
+    private Integer acido;
+
+    @Max(5)
+    @Min(0)
+    private Integer salado;
+
     public Tapa toTapa() throws IllegalArgumentException {
         Tapa tapa = new Tapa();
         tapa.setCountry(country);
@@ -36,6 +54,10 @@ public class TapaRequest {
         tapa.setPhoto(photo);
         tapa.setType(type);
         tapa.setName(name);
+        tapa.setAcido(acido);
+        tapa.setAmargo(amargo);
+        tapa.setDulce(dulce);
+        tapa.setSalado(salado);
         return tapa;
     }
 
@@ -74,6 +96,23 @@ public class TapaRequest {
     public void setType(String type) {
         this.type = type;
     }
+
+    public Integer getAcido() { return acido; }
+
+    public Integer getAmargo() { return amargo; }
+
+    public Integer getDulce() { return dulce; }
+
+    public Integer getSalado() { return salado; }
+
+    public void setAcido(Integer acido) { this.acido = acido; }
+
+    public void setSalado(Integer salado) { this.salado = salado; }
+
+    public void setDulce(Integer dulce) { this.dulce = dulce; }
+
+    public void setAmargo(Integer amargo) { this.amargo = amargo; }
+
 
     @Override
     public String toString() {
