@@ -57,6 +57,10 @@ public class TapaResource {
         @RequestParam(name = "type", required = false) String type,
         @RequestParam(name = "country", required = false) String country
     ) {
+        if(city == null) city = "";
+        if(precedence == null) precedence = "";
+        if(type == null) type = "";
+        if(country == null) country = "";
         Map<String, String> params = Map.of("city", city, "precedence", precedence, "type", type, "country", country);
         List<Tapa> tapaList = this.tapaService.findAll(params);
         List<TapaDTO> dtos = new ArrayList<>();
