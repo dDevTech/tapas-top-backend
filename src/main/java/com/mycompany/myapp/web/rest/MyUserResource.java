@@ -7,13 +7,15 @@ import com.mycompany.myapp.service.MyUserService;
 import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.service.dto.EstablishmentDTO;
 import com.mycompany.myapp.service.dto.TapaDTO;
-import java.util.List;
+
 
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/myuser")
