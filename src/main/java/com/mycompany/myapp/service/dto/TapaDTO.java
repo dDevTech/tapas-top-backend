@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Set;
+import javax.persistence.Column;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -46,6 +49,22 @@ public class TapaDTO implements Serializable {
 
     private Double average;
 
+    @Max(5)
+    @Min(0)
+    private Integer dulce;
+
+    @Max(5)
+    @Min(0)
+    private Integer amargo;
+
+    @Max(5)
+    @Min(0)
+    private Integer acido;
+
+    @Max(5)
+    @Min(0)
+    private Integer salado;
+
     public TapaDTO() {}
 
     private Long myCreatedBy;
@@ -65,6 +84,10 @@ public class TapaDTO implements Serializable {
         this.lastModifiedDate = tapa.getLastModifiedDate();
         this.myCreatedBy = tapa.getMyCreatedBy();
         this.imageUrl = tapa.getImageUrl();
+        this.dulce = tapa.getDulce();
+        this.acido = tapa.getAcido();
+        this.amargo = tapa.getAmargo();
+        this.salado = tapa.getSalado();
     }
 
     public TapaDTO(Tapa tapa, Establishment establishment, Double average, User_Rating user_rating) {
@@ -201,6 +224,22 @@ public class TapaDTO implements Serializable {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public Integer getAcido() { return acido; }
+
+    public Integer getAmargo() { return amargo; }
+
+    public Integer getDulce() { return dulce; }
+
+    public Integer getSalado() { return salado; }
+
+    public void setAcido(Integer acido) { this.acido = acido; }
+
+    public void setSalado(Integer salado) { this.salado = salado; }
+
+    public void setDulce(Integer dulce) { this.dulce = dulce; }
+
+    public void setAmargo(Integer amargo) { this.amargo = amargo; }
 
     @Override
     public boolean equals(Object o) {
