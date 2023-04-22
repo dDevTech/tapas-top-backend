@@ -159,4 +159,48 @@ public class MyUserService {
 
         return establishmentDTOList;
     }
+
+    public List<TapaDTO> addTapaToFavourites(Long tapaId, String login) {
+        Optional<Tapa> tapa = myUserService.getTapaById(tapaId);
+        if (!tapa.isPresent()) {
+            throw new ResponseStatusException("Could not found tapa with id: " + tapaId, "Invalid tapa", "Invalid tapa");
+        }
+
+        Optional<User> user = userRepository.findOneByLogin(login);
+        if (!user.isPresent()) {
+            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
+        }
+
+        Set<Tapa> favourites = user.get().getFavourites();
+        favourites.add(tapa.get());
+        user.get().setFavourites(favourites);
+        userRepository.save(user.get());
+
+        List<TapaDTO> tapaDTOList = myUserService.getFavourites(login);
+        return tapaDTOList;
+    }
+
+    public List<TapaDTO> removeTapaFromFavourites(Long tapaId, String login) {
+        Optional<Tapa> tapa = myUserService.getTapaById(tapaId);
+        if (!tapa.isPresent()) {
+            throw new ResponseStatusException("Could not found tapa with id: " + tapaId, "Invalid tapa", "Invalid tapa");
+        }
+
+        Optional<User> user = userRepository.findById(currentUser.getId());
+        if (!user.isPresent()) {
+            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
+        }
+
+        Set<Tapa> favourites = user.get().getFavourites();
+        if (!favourites.contains(tapa.get())) {
+            throw new ResponseStatusException("Could not found tapa with id: " + tapaId, "Invalid tapa", "Invalid tapa");
+        }
+
+        favourites.remove(tapa.get());
+        user.get().setFavourites(favourites);
+        userRepository.save(user.get());
+
+        List<TapaDTO> tapaDTOList = myUserService.getFavourites(login);
+        return tapaDTOList;
+    }
 }
