@@ -16,7 +16,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
@@ -159,76 +158,5 @@ public class MyUserService {
             .collect(Collectors.toList());
 
         return establishmentDTOList;
-    }
-
-    public List<TapaDTO> addTapaToFavourites(Long tapaId, String login) {
-        Optional<Tapa> tapaNew = tapaRepository.findById(tapaId);
-        if (!tapaNew.isPresent()) {
-            throw new BadRequestAlertException("Could not found tapa with id: " + tapaId, "Invalid tapa", "Invalid tapa");
-        }
-
-        Optional<User> user = userRepository.findOneByLogin(login);
-        if (!user.isPresent()) {
-            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
-        }
-
-        Set<Tapa> favourites = user.get().getFavourites();
-        favourites.add(tapaNew.get());
-        user.get().setFavourites(favourites);
-        userRepository.save(user.get());
-
-        List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
-
-        List<TapaDTO> res = tapas
-            .stream()
-            .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
-                User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
-                if (rating != null) {
-                    User_RatingDTO ratingDTO = new User_RatingDTO(rating);
-                    tapaDTO.setRating(ratingDTO);
-                }
-                return tapaDTO;
-            })
-            .collect(Collectors.toList());
-        return res;
-    }
-
-    public List<TapaDTO> removeTapaFromFavourites(Long tapaId, String login) {
-        Optional<Tapa> tapaToRemove = tapaRepository.findById(tapaId);
-        if (!tapaToRemove.isPresent()) {
-            throw new BadRequestAlertException("Could not found tapa with id: " + tapaId, "Invalid tapa", "Invalid tapa");
-        }
-
-        Optional<User> user = userRepository.findOneByLogin(login);
-        if (!user.isPresent()) {
-            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
-        }
-
-        Set<Tapa> favourites = user.get().getFavourites();
-        if (!favourites.contains(tapaToRemove.get())) {
-            throw new BadRequestAlertException("Could not found tapa with id: " + tapaId, "Invalid tapa", "Invalid tapa");
-        }
-
-
-        favourites.remove(tapaToRemove);
-        user.get().setFavourites(favourites);
-        userRepository.save(user.get());
-
-        List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
-
-        List<TapaDTO> res = tapas
-            .stream()
-            .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
-                User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
-                if (rating != null) {
-                    User_RatingDTO ratingDTO = new User_RatingDTO(rating);
-                    tapaDTO.setRating(ratingDTO);
-                }
-                return tapaDTO;
-            })
-            .collect(Collectors.toList());
-        return res;
     }
 }

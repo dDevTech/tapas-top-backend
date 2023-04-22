@@ -1,20 +1,18 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.Establishment;
-import com.mycompany.myapp.domain.Tapa;
-import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.service.MyUserService;
 import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.service.dto.EstablishmentDTO;
 import com.mycompany.myapp.service.dto.TapaDTO;
 import java.util.List;
-
-import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/myuser")
@@ -58,28 +56,48 @@ public class MyUserResource {
         List<EstablishmentDTO> restaurants = myUserService.getLastRestaurants(login);
         return ResponseEntity.ok(restaurants);
     }
-
     @PostMapping("/favourites/{tapaId}")
-    public ResponseEntity<List<TapaDTO>> addTapaToFavourites(@PathVariable Long tapaId){
+    public ResponseEntity<List<TapaDTO>> addTapaToFavourites(@PathVariable Long tapaId, @AuthenticationPrincipal(expression = "user") User currentUser) {
+        Optional<Tapa> tapa = myUserService.getTapaById(tapaId);
+        if (!tapa.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tapa not found");
+        }
 
-        Establishment establishment = new Establishment();
-        User user = userService
-            .getUserWithAuthorities()
-            .orElseThrow(() -> new BadRequestAlertException("Could not found users login", "Login not found", "Login not found"));
+        Optional<User> user = userRepository.findById(currentUser.getId());
+        if (!user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
+        }
 
-        establishment.setMyCreatedBy(user.getId());
-        List<TapaDTO> tapas = myUserService.addTapaToFavourites(tapaId, user.getLogin());
-        return ResponseEntity.ok(tapas);
+        Set<Tapa> favourites = user.get().getFavourites();
+        favourites.add(tapa.get());
+        user.get().setFavourites(favourites);
+        userRepository.save(user.get());
+
+        List<TapaDTO> tapaDTOList = myUserService.getFavourites(currentUser.getLogin());
+        return ResponseEntity.ok(tapaDTOList);
     }
 
-    @DeleteMapping("/favourites/{tapaId}")
-    public ResponseEntity<List<TapaDTO>> removeTapaFromFavourites(@PathVariable Long tapaId){
-        Establishment establishment = new Establishment();
-        User user = userService
-            .getUserWithAuthorities()
-            .orElseThrow(() -> new BadRequestAlertException("Could not found users login", "Login not found", "Login not found"));
-        establishment.setMyCreatedBy(user.getId());
-        List<TapaDTO> tapas = myUserService.removeTapaFromFavourites(tapaId, user.getLogin());
-        return ResponseEntity.ok(tapas);
+    public ResponseEntity<List<TapaDTO>> removeTapaFromFavourites(@PathVariable Long tapaId, @AuthenticationPrincipal(expression = "user") User currentUser) {
+        Optional<Tapa> tapa = myUserService.getTapaById(tapaId);
+        if (!tapa.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tapa not found");
+        }
+
+        Optional<User> user = userRepository.findById(currentUser.getId());
+        if (!user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "User not found");
+        }
+
+        Set<Tapa> favourites = user.get().getFavourites();
+        if (!favourites.contains(tapa.get())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tapa not in favourites");
+        }
+
+        favourites.remove(tapa.get());
+        user.get().setFavourites(favourites);
+        userRepository.save(user.get());
+
+        List<TapaDTO> tapaDTOList = myUserService.getFavourites(currentUser.getLogin());
+        return ResponseEntity.ok(tapaDTOList);
     }
 }
