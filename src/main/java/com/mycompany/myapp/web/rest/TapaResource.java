@@ -17,6 +17,8 @@ import com.mycompany.myapp.service.dto.User_RatingDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import com.mycompany.myapp.web.rest.requests.TapaRequest;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,15 +50,18 @@ public class TapaResource {
     private UserRepository userRepository;
 
     @GetMapping("")
-    public List<TapaDTO> findAll() {
-        List<TapaDTO> dtos = this.tapaService.findAll();
-        /*
-        List<TapaDTO> dtos = new ArrayList<>();
-        for (Tapa tapa : tapaList) {
-            dtos.add(new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null));
-        }
-        */
-
+    public List<TapaDTO> findAll(
+        @RequestParam(name = "city", required = false) String city,
+        @RequestParam(name = "precedence", required = false) String precedence,
+        @RequestParam(name = "type", required = false) String type,
+        @RequestParam(name = "country", required = false) String country
+    ) {
+        if (city == null) city = "";
+        if (precedence == null) precedence = "";
+        if (type == null) type = "";
+        if (country == null) country = "";
+        Map<String, String> params = Map.of("city", city, "precedence", precedence, "type", type, "country", country);
+        List<TapaDTO> dtos = this.tapaService.findAll(params);
         return dtos;
     }
 
@@ -96,13 +101,22 @@ public class TapaResource {
     }
 
     @GetMapping("/name/{name}")
-    public List<TapaDTO> tapaByName(@PathVariable String name) {
+    public List<TapaDTO> tapaByName(
+        @PathVariable String name,
+        @RequestParam(name = "city", required = false) String city,
+        @RequestParam(name = "precedence", required = false) String precedence,
+        @RequestParam(name = "type", required = false) String type,
+        @RequestParam(name = "country", required = false) String country
+    ) {
         User user = SecurityUtils
             .getCurrentUserLogin()
             .flatMap(userRepository::findOneWithAuthoritiesByLogin)
             .orElseThrow(() -> new BadRequestAlertException("Could not found user with login", "Invalid login", "Invalid login"));
+
+        Map<String, String> params = Map.of("city", city, "precedence", precedence, "type", type, "country", country);
+
         return tapaService
-            .findByName(name)
+            .findByName(name, params)
             .stream()
             .map(tapa -> {
                 TapaDTO dto = new TapaDTO(tapa, null, user_ratingService.getTapaRatingAverage(tapa.getId()), null);
