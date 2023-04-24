@@ -7,15 +7,12 @@ import com.mycompany.myapp.service.MyUserService;
 import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.service.dto.EstablishmentDTO;
 import com.mycompany.myapp.service.dto.TapaDTO;
-
-
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/myuser")
@@ -59,28 +56,16 @@ public class MyUserResource {
         List<EstablishmentDTO> restaurants = myUserService.getLastRestaurants(login);
         return ResponseEntity.ok(restaurants);
     }
+
     @PostMapping("/favourites/{tapaId}")
-    public ResponseEntity<List<TapaDTO>> addTapaToFavourites(@PathVariable Long tapaId){
-
-        Establishment establishment = new Establishment();
-        User user = userService
-            .getUserWithAuthorities()
-            .orElseThrow(() -> new BadRequestAlertException("Could not found users login", "Login not found", "Login not found"));
-
-        establishment.setMyCreatedBy(user.getId());
-        List<TapaDTO> tapas = myUserService.addTapaToFavourites(tapaId, user.getLogin());
-        return ResponseEntity.ok(tapas);
+    public ResponseEntity addTapaToFavourites(@PathVariable Long tapaId) {
+        myUserService.addTapaToFavourites(tapaId);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/favourites/{tapaId}")
-    public ResponseEntity<List<TapaDTO>> removeTapaFromFavourites(@PathVariable Long tapaId){
-
-        Establishment establishment = new Establishment();
-        User user = userService
-            .getUserWithAuthorities()
-            .orElseThrow(() -> new BadRequestAlertException("Could not found users login", "Login not found", "Login not found"));
-        establishment.setMyCreatedBy(user.getId());
-        List<TapaDTO> tapas = myUserService.removeTapaFromFavourites(tapaId, user.getLogin());
-        return ResponseEntity.ok(tapas);
+    public ResponseEntity removeTapaFromFavourites(@PathVariable Long tapaId) {
+        myUserService.removeTapaFromFavourites(tapaId);
+        return ResponseEntity.ok().build();
     }
 }

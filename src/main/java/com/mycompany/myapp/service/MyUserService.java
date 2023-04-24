@@ -13,10 +13,7 @@ import com.mycompany.myapp.service.dto.User_RatingDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
@@ -160,66 +157,45 @@ public class MyUserService {
 
         return establishmentDTOList;
     }
-    public List<TapaDTO> addTapaToFavourites(Long tapaId, String login) {
+
+    public void addTapaToFavourites(Long tapaId) {
+        User user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new BadRequestAlertException("Could not found users login", "Login not found", "Login not found"));
+
         Optional<Tapa> tapaNew = tapaRepository.findById(tapaId);
         if (!tapaNew.isPresent()) {
             throw new BadRequestAlertException("Could not found tapa with id: " + tapaId, "Invalid tapa", "Invalid tapa");
         }
 
-        Optional<User> user = userRepository.findOneByLogin(login);
-        if (!user.isPresent()) {
-            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
-        }
-
-        Set<Tapa> favourites = user.get().getFavourites();
+        Set<Tapa> favourites = user.getFavourites();
         favourites.add(tapaNew.get());
-        user.get().setFavourites(favourites);
-        userRepository.save(user.get());
-
-        List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
-
-        List<TapaDTO> res = user.get().getFavourites()
-            .stream()
-            .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
-
-                return tapaDTO;
-            })
-            .collect(Collectors.toList());
-        return res;
+        user.setFavourites(favourites);
+        userRepository.save(user);
     }
 
-    public List<TapaDTO> removeTapaFromFavourites(Long tapaId, String login) {
+    public void removeTapaFromFavourites(Long tapaId) {
+        User user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new BadRequestAlertException("Could not found users login", "Login not found", "Login not found"));
+
         Optional<Tapa> tapaToRemove = tapaRepository.findById(tapaId);
         if (!tapaToRemove.isPresent()) {
             throw new BadRequestAlertException("Could not found tapa with id: " + tapaId, "Invalid tapa", "Invalid tapa");
         }
 
-        Optional<User> user = userRepository.findOneByLogin(login);
-        if (!user.isPresent()) {
-            throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
+        Set<Tapa> favourites = user.getFavourites();
+        if (user.getFavourites().stream().noneMatch(tapa -> Objects.equals(tapa.getId(), tapaToRemove.get().getId()))) {
+            throw new BadRequestAlertException(
+                "Could not found tapa in user favourites with id: " + tapaId,
+                "Invalid tapa",
+                "Invalid tapa"
+            );
         }
 
-        Set<Tapa> favourites = user.get().getFavourites();
-        if (!favourites.contains(tapaToRemove.get())) {
-            throw new BadRequestAlertException("Could not found tapa with id: " + tapaId, "Invalid tapa", "Invalid tapa");
-        }
-
-
-        favourites.remove(tapaToRemove);
-        user.get().setFavourites(favourites);
-        userRepository.save(user.get());
-
-        List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
-
-        List<TapaDTO> res = user.get().getFavourites()
-            .stream()
-            .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
-
-                return tapaDTO;
-            })
-            .collect(Collectors.toList());
-        return res;
+        favourites =
+            favourites.stream().filter(tapa -> !Objects.equals(tapa.getId(), tapaToRemove.get().getId())).collect(Collectors.toSet());
+        user.setFavourites(favourites);
+        userRepository.save(user);
     }
 }
