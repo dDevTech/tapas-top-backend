@@ -2,6 +2,7 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.Tapa;
 import com.mycompany.myapp.repository.TapaRepository;
+import com.mycompany.myapp.service.dto.EstablishmentDTO;
 import com.mycompany.myapp.service.dto.TapaDTO;
 import com.mycompany.myapp.service.filters.TapaFilter;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
@@ -32,7 +33,16 @@ public class TapaService {
         List<Tapa> tapas = TapaFilter.filterTapas(tapaRepository.findAll(), filters);
         List<TapaDTO> res = tapas
             .stream()
-            .map(tapa -> new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null))
+            .map(tapa -> {
+                TapaDTO tapaDTO = new TapaDTO(tapa, null, user_ratingService.getTapaRatingAverage(tapa.getId()), null);
+                EstablishmentDTO establishmentDTO = new EstablishmentDTO(
+                    tapa.getEstablishment(),
+                    tapa.getEstablishment().getAddress(),
+                    null
+                );
+                tapaDTO.setEstablishment(establishmentDTO);
+                return tapaDTO;
+            })
             .collect(Collectors.toList());
         res.sort(Comparator.comparingDouble(TapaDTO::getAverage));
         Collections.reverse(res);
