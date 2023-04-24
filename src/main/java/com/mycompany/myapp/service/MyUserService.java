@@ -178,15 +178,11 @@ public class MyUserService {
 
         List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
 
-        List<TapaDTO> res = tapas
+        List<TapaDTO> res = user.get().getFavourites()
             .stream()
             .map(tapa -> {
                 TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
-                User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
-                if (rating != null) {
-                    User_RatingDTO ratingDTO = new User_RatingDTO(rating);
-                    tapaDTO.setRating(ratingDTO);
-                }
+
                 return tapaDTO;
             })
             .collect(Collectors.toList());
@@ -216,15 +212,11 @@ public class MyUserService {
 
         List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
 
-        List<TapaDTO> res = tapas
+        List<TapaDTO> res = user.get().getFavourites()
             .stream()
             .map(tapa -> {
                 TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), user_ratingService.getTapaRatingAverage(tapa.getId()), null);
-                User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
-                if (rating != null) {
-                    User_RatingDTO ratingDTO = new User_RatingDTO(rating);
-                    tapaDTO.setRating(ratingDTO);
-                }
+
                 return tapaDTO;
             })
             .collect(Collectors.toList());
