@@ -1,18 +1,18 @@
 package com.mycompany.myapp.web.rest;
 
+import com.mycompany.myapp.domain.Establishment;
+import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.service.MyUserService;
 import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.service.dto.EstablishmentDTO;
 import com.mycompany.myapp.service.dto.TapaDTO;
+import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/myuser")
@@ -55,5 +55,17 @@ public class MyUserResource {
     public ResponseEntity<List<EstablishmentDTO>> getLastRestaurants(@PathVariable String login) {
         List<EstablishmentDTO> restaurants = myUserService.getLastRestaurants(login);
         return ResponseEntity.ok(restaurants);
+    }
+
+    @PostMapping("/favourites/{tapaId}")
+    public ResponseEntity addTapaToFavourites(@PathVariable Long tapaId) {
+        myUserService.addTapaToFavourites(tapaId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/favourites/{tapaId}")
+    public ResponseEntity removeTapaFromFavourites(@PathVariable Long tapaId) {
+        myUserService.removeTapaFromFavourites(tapaId);
+        return ResponseEntity.ok().build();
     }
 }
