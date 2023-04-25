@@ -122,7 +122,7 @@ public class TapaResource {
             .findByName(name, params)
             .stream()
             .map(tapa -> {
-                TapaDTO dto = new TapaDTO(tapa, null, user_ratingService.getTapaRatingAverage(tapa.getId()), null);
+                TapaDTO dto = new TapaDTO(tapa, null, tapa.getRatings(), null);
                 EstablishmentDTO establishmentDTO = new EstablishmentDTO(
                     tapa.getEstablishment(),
                     tapa.getEstablishment().getAddress(),
