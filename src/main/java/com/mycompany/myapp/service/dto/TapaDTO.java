@@ -93,7 +93,7 @@ public class TapaDTO implements Serializable {
 
     public TapaDTO(Tapa tapa, Establishment establishment, Set<User_Rating> ratings, User_Rating user_rating) {
         this(tapa);
-        this.establishment = establishment != null ? new EstablishmentDTO(establishment) : null;
+        this.establishment = establishment != null ? new EstablishmentDTO(establishment, establishment.getAddress(), null) : null;
         this.rating = rating != null ? new User_RatingDTO(user_rating) : null;
         this.ratings = ratings.stream().map(User_RatingDTO::new).collect(Collectors.toSet());
     }
