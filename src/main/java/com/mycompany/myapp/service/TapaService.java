@@ -34,7 +34,7 @@ public class TapaService {
         List<TapaDTO> res = tapas
             .stream()
             .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, null, user_ratingService.getTapaRatingAverage(tapa.getId()), null);
+                TapaDTO tapaDTO = new TapaDTO(tapa, null, tapa.getRatings(), null);
                 EstablishmentDTO establishmentDTO = new EstablishmentDTO(
                     tapa.getEstablishment(),
                     tapa.getEstablishment().getAddress(),

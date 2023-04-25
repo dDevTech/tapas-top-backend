@@ -7,7 +7,10 @@ import com.mycompany.myapp.domain.User_Rating;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -46,8 +49,6 @@ public class TapaDTO implements Serializable {
     private String lastModifiedBy;
 
     private Instant lastModifiedDate;
-
-    private Double average;
 
     @Max(5)
     @Min(0)
@@ -90,11 +91,11 @@ public class TapaDTO implements Serializable {
         this.salado = tapa.getSalado();
     }
 
-    public TapaDTO(Tapa tapa, Establishment establishment, Double average, User_Rating user_rating) {
+    public TapaDTO(Tapa tapa, Establishment establishment, Set<User_Rating> ratings, User_Rating user_rating) {
         this(tapa);
         this.establishment = establishment != null ? new EstablishmentDTO(establishment) : null;
         this.rating = rating != null ? new User_RatingDTO(user_rating) : null;
-        this.average = average;
+        this.ratings = ratings.stream().map(User_RatingDTO::new).collect(Collectors.toSet());
     }
 
     public Long getId() {
@@ -202,11 +203,13 @@ public class TapaDTO implements Serializable {
     }
 
     public Double getAverage() {
-        return average;
-    }
+        if (ratings == null || ratings.isEmpty()) return 0.0;
 
-    public void setAverage(Double average) {
-        this.average = average;
+        Double average = 0.0;
+        for (User_RatingDTO ratingDTO : ratings) {
+            average += ratingDTO.getRating();
+        }
+        return average / ratings.size();
     }
 
     public Long getMyCreatedBy() {
@@ -225,21 +228,37 @@ public class TapaDTO implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    public Integer getAcido() { return acido; }
+    public Integer getAcido() {
+        return acido;
+    }
 
-    public Integer getAmargo() { return amargo; }
+    public Integer getAmargo() {
+        return amargo;
+    }
 
-    public Integer getDulce() { return dulce; }
+    public Integer getDulce() {
+        return dulce;
+    }
 
-    public Integer getSalado() { return salado; }
+    public Integer getSalado() {
+        return salado;
+    }
 
-    public void setAcido(Integer acido) { this.acido = acido; }
+    public void setAcido(Integer acido) {
+        this.acido = acido;
+    }
 
-    public void setSalado(Integer salado) { this.salado = salado; }
+    public void setSalado(Integer salado) {
+        this.salado = salado;
+    }
 
-    public void setDulce(Integer dulce) { this.dulce = dulce; }
+    public void setDulce(Integer dulce) {
+        this.dulce = dulce;
+    }
 
-    public void setAmargo(Integer amargo) { this.amargo = amargo; }
+    public void setAmargo(Integer amargo) {
+        this.amargo = amargo;
+    }
 
     @Override
     public boolean equals(Object o) {

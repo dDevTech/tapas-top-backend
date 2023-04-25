@@ -46,7 +46,7 @@ public class Tapa extends AbstractAuditingEntity<Long> {
     @JoinColumn(name = "establishment_id", nullable = false)
     private Establishment establishment;
 
-    @OneToMany(mappedBy = "tapa")
+    @OneToMany(mappedBy = "tapa", fetch = FetchType.EAGER)
     private Set<User_Rating> ratings;
 
     @Max(5)
@@ -68,6 +68,9 @@ public class Tapa extends AbstractAuditingEntity<Long> {
     @Min(0)
     @Column(name = "salado")
     private Integer salado;
+
+    @ManyToMany(mappedBy = "favourites")
+    private Set<User> fans = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -141,24 +144,45 @@ public class Tapa extends AbstractAuditingEntity<Long> {
         this.myCreatedBy = myCreatedBy;
     }
 
-    public Integer getAcido() { return acido; }
+    public Integer getAcido() {
+        return acido;
+    }
 
-    public Integer getAmargo() { return amargo; }
+    public Integer getAmargo() {
+        return amargo;
+    }
 
-    public Integer getDulce() { return dulce; }
+    public Integer getDulce() {
+        return dulce;
+    }
 
-    public Integer getSalado() { return salado; }
+    public Integer getSalado() {
+        return salado;
+    }
 
-    public void setSalado(Integer salado) { this.salado = salado; }
+    public void setSalado(Integer salado) {
+        this.salado = salado;
+    }
 
-    public void setDulce(Integer dulce) { this.dulce = dulce; }
+    public void setDulce(Integer dulce) {
+        this.dulce = dulce;
+    }
 
-    public void setAmargo(Integer amargo) { this.amargo = amargo; }
+    public void setAmargo(Integer amargo) {
+        this.amargo = amargo;
+    }
 
-    public void setAcido(Integer acido) { this.acido = acido; }
+    public void setAcido(Integer acido) {
+        this.acido = acido;
+    }
 
-    @ManyToMany(mappedBy = "favourites")
-    private Set<User> fans = new HashSet<>();
+    public Set<User_Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<User_Rating> ratings) {
+        this.ratings = ratings;
+    }
 
     @Override
     public boolean equals(Object o) {
