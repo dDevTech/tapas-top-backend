@@ -163,6 +163,8 @@ public class MyUserService {
             .getUserWithAuthorities()
             .orElseThrow(() -> new BadRequestAlertException("Could not found users login", "Login not found", "Login not found"));
 
+        user = userRepository.findById(user.getId()).get(); //solucion cutre pero que funciona
+
         Optional<Tapa> tapaNew = tapaRepository.findById(tapaId);
         if (!tapaNew.isPresent()) {
             throw new BadRequestAlertException("Could not found tapa with id: " + tapaId, "Invalid tapa", "Invalid tapa");
@@ -178,6 +180,8 @@ public class MyUserService {
         User user = userService
             .getUserWithAuthorities()
             .orElseThrow(() -> new BadRequestAlertException("Could not found users login", "Login not found", "Login not found"));
+
+        user = userRepository.findById(user.getId()).get(); //solucion cutre pero que funciona
 
         Optional<Tapa> tapaToRemove = tapaRepository.findById(tapaId);
         if (!tapaToRemove.isPresent()) {
