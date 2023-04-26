@@ -9,5 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface User_RatingRepository extends JpaRepository<User_Rating, Long> {
     List<User_Rating> findAllByTapaId(Long id);
 
+    List<User_Rating> findAllByUserId(Long id);
+
     List<User_Rating> findAllByUserIdAndTapaId(Long user_id, Long tapa_id);
 }
