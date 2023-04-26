@@ -1,9 +1,12 @@
 package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.Tapa;
+import com.mycompany.myapp.domain.User;
+import com.mycompany.myapp.domain.User_Rating;
 import com.mycompany.myapp.repository.TapaRepository;
 import com.mycompany.myapp.service.dto.EstablishmentDTO;
 import com.mycompany.myapp.service.dto.TapaDTO;
+import com.mycompany.myapp.service.dto.User_RatingDTO;
 import com.mycompany.myapp.service.filters.TapaFilter;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.util.Collections;
@@ -29,18 +32,25 @@ public class TapaService {
     @Autowired
     private TapaRepository tapaRepository;
 
+    @Autowired
+    private UserService userService;
+
     public List<TapaDTO> findAll(Map<String, String> filters) {
+        User user = userService
+            .getUserWithAuthorities()
+            .orElseThrow(() -> new BadRequestAlertException("Could not found users login", "Login not found", "Login not found"));
+
         List<Tapa> tapas = TapaFilter.filterTapas(tapaRepository.findAll(), filters);
         List<TapaDTO> res = tapas
             .stream()
             .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, null, tapa.getRatings(), null);
-                EstablishmentDTO establishmentDTO = new EstablishmentDTO(
-                    tapa.getEstablishment(),
-                    tapa.getEstablishment().getAddress(),
-                    null
-                );
-                tapaDTO.setEstablishment(establishmentDTO);
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings());
+                User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.getId());
+                if (rating != null) {
+                    User_RatingDTO ratingDTO = new User_RatingDTO(rating);
+                    tapaDTO.setRating(ratingDTO);
+                }
+                tapaDTO.setFavourite(tapa.getFans().stream().filter(fan -> fan.getId().equals(user.getId())).count() > 0);
                 return tapaDTO;
             })
             .collect(Collectors.toList());

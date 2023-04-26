@@ -54,12 +54,13 @@ public class MyUserService {
             .orElse(Collections.emptySet())
             .stream()
             .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings(), null);
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings());
                 User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
                 if (rating != null) {
                     User_RatingDTO ratingDTO = new User_RatingDTO(rating);
                     tapaDTO.setRating(ratingDTO);
                 }
+                tapaDTO.setFavourite(tapa.getFans().stream().filter(fan -> fan.getId().equals(user.get().getId())).count() > 0);
                 return tapaDTO;
             })
             .collect(Collectors.toList());
@@ -108,12 +109,13 @@ public class MyUserService {
         List<TapaDTO> res = tapas
             .stream()
             .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings(), null);
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings());
                 User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
                 if (rating != null) {
                     User_RatingDTO ratingDTO = new User_RatingDTO(rating);
                     tapaDTO.setRating(ratingDTO);
                 }
+                tapaDTO.setFavourite(tapa.getFans().stream().filter(fan -> fan.getId().equals(user.get().getId())).count() > 0);
                 return tapaDTO;
             })
             .collect(Collectors.toList());
@@ -169,12 +171,13 @@ public class MyUserService {
         List<TapaDTO> res = tapas
             .stream()
             .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings(), null);
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings());
                 User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
                 if (rating != null) {
                     User_RatingDTO ratingDTO = new User_RatingDTO(rating);
                     tapaDTO.setRating(ratingDTO);
                 }
+                tapaDTO.setFavourite(tapa.getFans().stream().filter(fan -> fan.getId().equals(user.get().getId())).count() > 0);
                 return tapaDTO;
             })
             .collect(Collectors.toList());

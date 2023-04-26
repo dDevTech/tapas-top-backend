@@ -69,7 +69,7 @@ public class Tapa extends AbstractAuditingEntity<Long> {
     @Column(name = "salado")
     private Integer salado;
 
-    @ManyToMany(mappedBy = "favourites")
+    @ManyToMany(mappedBy = "favourites", fetch = FetchType.EAGER)
     private Set<User> fans = new HashSet<>();
 
     public Long getId() {
@@ -182,6 +182,14 @@ public class Tapa extends AbstractAuditingEntity<Long> {
 
     public void setRatings(Set<User_Rating> ratings) {
         this.ratings = ratings;
+    }
+
+    public Set<User> getFans() {
+        return fans;
+    }
+
+    public void setFans(Set<User> fans) {
+        this.fans = fans;
     }
 
     @Override
