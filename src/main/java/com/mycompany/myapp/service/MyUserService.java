@@ -54,12 +54,13 @@ public class MyUserService {
             .orElse(Collections.emptySet())
             .stream()
             .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings(), null);
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings());
                 User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
                 if (rating != null) {
                     User_RatingDTO ratingDTO = new User_RatingDTO(rating);
                     tapaDTO.setRating(ratingDTO);
                 }
+                tapaDTO.setFavourite(tapa.getFans().stream().filter(fan -> fan.getId().equals(user.get().getId())).count() > 0);
                 return tapaDTO;
             })
             .collect(Collectors.toList());
@@ -73,17 +74,48 @@ public class MyUserService {
             throw new BadRequestAlertException("Could not found user with login: " + login, "Invalid login", "Invalid login");
         }
 
+        //Tapas creadas por el usuario
         List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
 
+        //Tapas valoradas por el usuario
+        for (Tapa tapa : user_ratingService.findAllTapasRatedByUser(user.get().getId())) {
+            if (!tapas.contains(tapa)) tapas.add(tapa);
+        }
+
+        //Ordenar tapas por creacion o valoracion
+        tapas =
+            tapas
+                .stream()
+                .sorted((t1, t2) -> {
+                    Instant i1 = t1.getCreatedDate();
+                    List<User_Rating> userRatings1 = t1
+                        .getRatings()
+                        .stream()
+                        .filter(r1 -> r1.getUser().getId().equals(user.get().getId()))
+                        .collect(Collectors.toList());
+                    if (userRatings1.size() > 0) i1 = userRatings1.get(0).getCreatedDate();
+                    Instant i2 = t2.getCreatedDate();
+                    List<User_Rating> userRatings2 = t2
+                        .getRatings()
+                        .stream()
+                        .filter(r2 -> r2.getUser().getId().equals(user.get().getId()))
+                        .collect(Collectors.toList());
+                    if (userRatings2.size() > 0) i2 = userRatings2.get(0).getCreatedDate();
+                    return i2.compareTo(i1);
+                })
+                .collect(Collectors.toList());
+
+        //Crear DTOs
         List<TapaDTO> res = tapas
             .stream()
             .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings(), null);
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings());
                 User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
                 if (rating != null) {
                     User_RatingDTO ratingDTO = new User_RatingDTO(rating);
                     tapaDTO.setRating(ratingDTO);
                 }
+                tapaDTO.setFavourite(tapa.getFans().stream().filter(fan -> fan.getId().equals(user.get().getId())).count() > 0);
                 return tapaDTO;
             })
             .collect(Collectors.toList());
@@ -100,21 +132,56 @@ public class MyUserService {
 
         Instant today = Instant.now();
 
-        List<Tapa> tapas = tapaRepository.findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId());
+        //Tapas creadas por el usuario en ultimos 7 dias
+        List<Tapa> tapas = tapaRepository
+            .findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId())
+            .stream()
+            .filter(tapa -> tapa.getCreatedDate().isAfter(Instant.from(today.minus(7, ChronoUnit.DAYS))))
+            .collect(Collectors.toList());
 
+        //Tapas valoradas por el usuario en ultimos 7 dias
+        for (Tapa tapa : user_ratingService.findLastTapasRatedByUser(user.get().getId())) {
+            if (!tapas.contains(tapa)) tapas.add(tapa);
+        }
+
+        //Ordenar tapas por creacion o valoracion
+        tapas =
+            tapas
+                .stream()
+                .sorted((t1, t2) -> {
+                    Instant i1 = t1.getCreatedDate();
+                    List<User_Rating> userRatings1 = t1
+                        .getRatings()
+                        .stream()
+                        .filter(r1 -> r1.getUser().getId().equals(user.get().getId()))
+                        .collect(Collectors.toList());
+                    if (userRatings1.size() > 0) i1 = userRatings1.get(0).getCreatedDate();
+                    Instant i2 = t2.getCreatedDate();
+                    List<User_Rating> userRatings2 = t2
+                        .getRatings()
+                        .stream()
+                        .filter(r2 -> r2.getUser().getId().equals(user.get().getId()))
+                        .collect(Collectors.toList());
+                    if (userRatings2.size() > 0) i2 = userRatings2.get(0).getCreatedDate();
+                    return i2.compareTo(i1);
+                })
+                .collect(Collectors.toList());
+
+        //Crear DTOs
         List<TapaDTO> res = tapas
             .stream()
             .map(tapa -> {
-                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings(), null);
+                TapaDTO tapaDTO = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings());
                 User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.get().getId());
                 if (rating != null) {
                     User_RatingDTO ratingDTO = new User_RatingDTO(rating);
                     tapaDTO.setRating(ratingDTO);
                 }
+                tapaDTO.setFavourite(tapa.getFans().stream().filter(fan -> fan.getId().equals(user.get().getId())).count() > 0);
                 return tapaDTO;
             })
-            .filter(tapaDTO -> tapaDTO.getCreatedDate().isAfter(Instant.from(today.minus(7, ChronoUnit.DAYS))))
             .collect(Collectors.toList());
+
         return res;
     }
 
@@ -129,6 +196,9 @@ public class MyUserService {
 
         List<EstablishmentDTO> res = establishments
             .stream()
+            .sorted((e1, e2) -> {
+                return e2.getCreatedDate().compareTo(e2.getCreatedDate());
+            })
             .map(establishment -> {
                 return new EstablishmentDTO(establishment, establishment.getAddress(), null);
             })
@@ -149,10 +219,13 @@ public class MyUserService {
         List<EstablishmentDTO> establishmentDTOList = establishmentRepository
             .findAllByMyCreatedByOrderByCreatedDateDesc(user.get().getId())
             .stream()
+            .filter(establishment -> establishment.getCreatedDate().isAfter(Instant.from(today.minus(7, ChronoUnit.DAYS))))
+            .sorted((e1, e2) -> {
+                return e2.getCreatedDate().compareTo(e2.getCreatedDate());
+            })
             .map(establishment -> {
                 return new EstablishmentDTO(establishment, establishment.getAddress(), null);
             })
-            .filter(tapaDTO -> tapaDTO.getCreatedDate().isAfter(Instant.from(today.minus(7, ChronoUnit.DAYS))))
             .collect(Collectors.toList());
 
         return establishmentDTOList;

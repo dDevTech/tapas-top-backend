@@ -122,18 +122,13 @@ public class TapaResource {
             .findByName(name, params)
             .stream()
             .map(tapa -> {
-                TapaDTO dto = new TapaDTO(tapa, null, tapa.getRatings(), null);
-                EstablishmentDTO establishmentDTO = new EstablishmentDTO(
-                    tapa.getEstablishment(),
-                    tapa.getEstablishment().getAddress(),
-                    null
-                );
-                dto.setEstablishment(establishmentDTO);
+                TapaDTO dto = new TapaDTO(tapa, tapa.getEstablishment(), tapa.getRatings());
                 User_Rating rating = user_ratingService.findByTapaIdAndUserId(tapa.getId(), user.getId());
                 if (rating != null) {
                     User_RatingDTO ratingDTO = new User_RatingDTO(rating);
                     dto.setRating(ratingDTO);
                 }
+                dto.setFavourite(tapa.getFans().stream().filter(fan -> fan.getId().equals(user.getId())).count() > 0);
                 return dto;
             })
             .collect(Collectors.toList());

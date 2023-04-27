@@ -42,6 +42,8 @@ public class TapaDTO implements Serializable {
     private Set<User_RatingDTO> ratings;
     private User_RatingDTO rating;
 
+    private Boolean isFavourite;
+
     private String createdBy;
 
     private Instant createdDate;
@@ -91,10 +93,9 @@ public class TapaDTO implements Serializable {
         this.salado = tapa.getSalado();
     }
 
-    public TapaDTO(Tapa tapa, Establishment establishment, Set<User_Rating> ratings, User_Rating user_rating) {
+    public TapaDTO(Tapa tapa, Establishment establishment, Set<User_Rating> ratings) {
         this(tapa);
         this.establishment = establishment != null ? new EstablishmentDTO(establishment, establishment.getAddress(), null) : null;
-        this.rating = rating != null ? new User_RatingDTO(user_rating) : null;
         this.ratings = ratings.stream().map(User_RatingDTO::new).collect(Collectors.toSet());
     }
 
@@ -200,6 +201,14 @@ public class TapaDTO implements Serializable {
 
     public void setRating(User_RatingDTO rating) {
         this.rating = rating;
+    }
+
+    public Boolean isFavourite() {
+        return isFavourite;
+    }
+
+    public void setFavourite(Boolean favourite) {
+        isFavourite = favourite;
     }
 
     public Double getAverage() {

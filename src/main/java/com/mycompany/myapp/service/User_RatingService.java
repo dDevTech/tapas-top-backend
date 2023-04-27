@@ -1,14 +1,14 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.User;
+import com.mycompany.myapp.domain.Tapa;
 import com.mycompany.myapp.domain.User_Rating;
 import com.mycompany.myapp.repository.TapaRepository;
 import com.mycompany.myapp.repository.UserRepository;
 import com.mycompany.myapp.repository.User_RatingRepository;
-import com.mycompany.myapp.security.SecurityUtils;
 import com.mycompany.myapp.service.dto.User_RatingDTO;
-import com.mycompany.myapp.web.rest.AccountResource;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -79,5 +79,19 @@ public class User_RatingService {
         List<User_Rating> ratings = userRatingRepository.findAllByUserIdAndTapaId(id_usuario, id_tapa);
         if (ratings.isEmpty()) return null;
         return ratings.get(0);
+    }
+
+    public List<Tapa> findAllTapasRatedByUser(Long userId) {
+        return userRatingRepository.findAllByUserId(userId).stream().map(User_Rating::getTapa).collect(Collectors.toList());
+    }
+
+    public List<Tapa> findLastTapasRatedByUser(Long userId) {
+        Instant today = Instant.now();
+        return userRatingRepository
+            .findAllByUserId(userId)
+            .stream()
+            .filter(userRating -> userRating.getCreatedDate().isAfter(Instant.from(today.minus(7, ChronoUnit.DAYS))))
+            .map(User_Rating::getTapa)
+            .collect(Collectors.toList());
     }
 }
