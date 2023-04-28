@@ -2,11 +2,9 @@ package com.mycompany.myapp.web.rest;
 
 import com.mycompany.myapp.domain.User;
 import com.mycompany.myapp.repository.UserRepository;
+import com.mycompany.myapp.repository.User_RatingRepository;
 import com.mycompany.myapp.security.SecurityUtils;
-import com.mycompany.myapp.service.AddressService;
-import com.mycompany.myapp.service.MailService;
-import com.mycompany.myapp.service.UserService;
-import com.mycompany.myapp.service.UsernameAlreadyUsedException;
+import com.mycompany.myapp.service.*;
 import com.mycompany.myapp.service.dto.AdminUserDTO;
 import com.mycompany.myapp.service.dto.PasswordChangeDTO;
 import com.mycompany.myapp.web.rest.errors.EmailAlreadyUsedException;
@@ -14,6 +12,8 @@ import com.mycompany.myapp.web.rest.errors.InvalidPasswordException;
 import com.mycompany.myapp.web.rest.errors.LoginAlreadyUsedException;
 import com.mycompany.myapp.web.rest.vm.KeyAndPasswordVM;
 import com.mycompany.myapp.web.rest.vm.ManagedUserVM;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -45,13 +45,22 @@ public class AccountResource {
 
     private final MailService mailService;
 
-    private AddressService addressService;
+    private final AddressService addressService;
 
-    public AccountResource(UserRepository userRepository, UserService userService, MailService mailService, AddressService addressService) {
+    private final User_RatingRepository userRatingRepository;
+
+    public AccountResource(
+        UserRepository userRepository,
+        UserService userService,
+        MailService mailService,
+        AddressService addressService,
+        User_RatingRepository userRatingRepository
+    ) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.mailService = mailService;
         this.addressService = addressService;
+        this.userRatingRepository = userRatingRepository;
     }
 
     /**
@@ -109,7 +118,12 @@ public class AccountResource {
         return userService
             .getUserWithAuthorities()
             .map(user ->
-                new AdminUserDTO(user, user.getAddress() != null ? addressService.findById(user.getAddress().getId()) : null, null, null)
+                new AdminUserDTO(
+                    user,
+                    user.getAddress() != null ? addressService.findById(user.getAddress().getId()) : null,
+                    null,
+                    new HashSet<>(userRatingRepository.findAllByUserId(user.getId()))
+                )
             )
             .orElseThrow(() -> new AccountResourceException("User could not be found"));
     }
